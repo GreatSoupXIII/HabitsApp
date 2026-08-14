@@ -1,0 +1,9 @@
+<resources>
+    <string name="app_name">HabitsApp</string>
+
+    <string name="title_habit_list">Мини-привычки</string>
+    <string name="title_habit_add">Создать мини-привычку</string>
+    <string name="title_habit_edit">Изменить мини-привычку</string>
+    <string name="title_habit_info">Информация о привычке</string>
+
+</resources>

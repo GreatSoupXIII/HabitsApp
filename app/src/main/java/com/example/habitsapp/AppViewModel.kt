@@ -1,0 +1,45 @@
+package com.example.habitsapp
+
+import android.app.Application
+import androidx.compose.runtime.mutableStateListOf
+import androidx.lifecycle.AndroidViewModel
+import androidx.lifecycle.viewModelScope
+import androidx.room3.Room
+import androidx.sqlite.driver.bundled.BundledSQLiteDriver
+import com.example.habitsapp.data.AppDatabase
+import com.example.habitsapp.data.dao.HabitDao
+import com.example.habitsapp.data.entities.HabitData
+import com.example.habitsapp.models.Habit
+import com.example.habitsapp.models.Reminder
+import kotlinx.coroutines.launch
+
+class AppViewModel(application: Application): AndroidViewModel(application) {
+    private val applicationContext = getApplication<Application>().applicationContext
+    val database: AppDatabase = Room.inMemoryDatabaseBuilder<AppDatabase>(applicationContext)
+        .setDriver(BundledSQLiteDriver())
+        .build()
+    val habitDao: HabitDao = database.habitDao()
+    val habitsList = mutableStateListOf<Habit>()
+
+    fun loadHabitList(): List<Habit> {
+        viewModelScope.launch {
+            val habitDataList = habitDao.getAll()
+
+            habitsList.clear()
+            //translate all HabitData objects from the database
+            //to format used by the application
+            for(habitData: HabitData in habitDataList) {
+                habitsList.add(Habit(
+                    habitData.name,
+                    habitData.successStreak,
+                    Reminder(
+                        habitData.isReminderActive,
+                        habitData.hour,
+                        habitData.minute
+                    )
+                ))
+            }
+        }
+        return habitsList
+    }
+}
