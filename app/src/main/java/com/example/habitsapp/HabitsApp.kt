@@ -18,6 +18,7 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.example.habitsapp.models.Habit
 import com.example.habitsapp.models.Reminder
+import com.example.habitsapp.routes.HabitAdd
 import com.example.habitsapp.routes.HabitList
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -45,7 +46,7 @@ fun HabitsApp() {
     ) { innerPadding ->
         when(currentDestination) {
             AppDestinations.HABIT_LIST -> HabitList(Modifier.padding(innerPadding), viewModel.loadHabitList())
-            AppDestinations.HABIT_ADD -> Text("TBD", Modifier.padding(innerPadding))
+            AppDestinations.HABIT_ADD -> HabitAdd(Modifier.padding(innerPadding)) { habit -> viewModel.addHabitAndReload(habit) }
             AppDestinations.HABIT_EDIT -> Text("TBD", Modifier.padding(innerPadding))
             AppDestinations.HABIT_INFO -> Text("TBD", Modifier.padding(innerPadding))
         }
