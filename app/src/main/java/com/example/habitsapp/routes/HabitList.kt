@@ -40,7 +40,7 @@ fun HabitList(modifier: Modifier, habitList: List<Habit>) {
 fun HabitListPreview() {
     //test data
     val habitList: List<Habit> = listOf(
-        Habit("Сделать 1 отжимание", 2, null),
+        Habit("Сделать 1 отжимание", 2, Reminder(false, 5, 30)),
         Habit("Сыграть в Гвинт", 999, Reminder(true, 5, 30))
     )
 

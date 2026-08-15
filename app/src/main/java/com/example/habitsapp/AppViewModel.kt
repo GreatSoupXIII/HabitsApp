@@ -10,7 +10,6 @@ import com.example.habitsapp.data.AppDatabase
 import com.example.habitsapp.data.dao.HabitDao
 import com.example.habitsapp.data.entities.HabitData
 import com.example.habitsapp.models.Habit
-import com.example.habitsapp.models.Reminder
 import kotlinx.coroutines.launch
 
 class AppViewModel(application: Application): AndroidViewModel(application) {
@@ -29,17 +28,16 @@ class AppViewModel(application: Application): AndroidViewModel(application) {
             //translate all HabitData objects from the database
             //to format used by the application
             for(habitData: HabitData in habitDataList) {
-                habitsList.add(Habit(
-                    habitData.name,
-                    habitData.successStreak,
-                    Reminder(
-                        habitData.isReminderActive,
-                        habitData.hour,
-                        habitData.minute
-                    )
-                ))
+                habitsList.add(Habit(habitData))
             }
         }
         return habitsList
+    }
+
+    fun addHabitAndReload(habit: Habit) {
+        viewModelScope.launch {
+            habitDao.insert(HabitData(habit))
+            loadHabitList()
+        }
     }
 }

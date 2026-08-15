@@ -68,7 +68,7 @@ enum class AppDestinations(
 fun HabitsAppPreview() {
 
     val habitList: List<Habit> = listOf(
-        Habit("Сделать 1 отжимание", 2, null),
+        Habit("Сделать 1 отжимание", 2, Reminder(false, 1, 20)),
         Habit("Сыграть в Гвинт", 999, Reminder(true, 5, 30))
     )
 

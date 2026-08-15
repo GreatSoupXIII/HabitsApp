@@ -12,6 +12,7 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.example.habitsapp.models.Habit
+import com.example.habitsapp.models.Reminder
 
 @Composable
 fun HabitListItem(habit: Habit) {
@@ -30,6 +31,6 @@ fun HabitListItem(habit: Habit) {
 @Preview
 @Composable
 fun HabitListItemPreview() {
-    val habit = Habit("Сделать 1 отжимание", 2, null)
+    val habit = Habit("Сделать 1 отжимание", 2, Reminder(true, 5, 30))
     HabitListItem(habit)
 }
