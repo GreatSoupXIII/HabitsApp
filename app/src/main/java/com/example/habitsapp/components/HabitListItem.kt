@@ -18,7 +18,7 @@ import com.example.habitsapp.models.Reminder
 fun HabitListItem(habit: Habit) {
     Row(
         modifier = Modifier
-            .background(color = Color(213, 242, 255))
+            .background(color = Color(0x60888888))
             .fillMaxWidth()
             .padding(10.dp),
         horizontalArrangement = Arrangement.SpaceBetween
