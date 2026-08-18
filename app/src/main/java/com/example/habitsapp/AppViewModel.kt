@@ -47,4 +47,11 @@ class AppViewModel(application: Application): AndroidViewModel(application) {
             loadHabitList()
         }
     }
+
+    fun updateHabitAndReload(habit: Habit) {
+        viewModelScope.launch {
+            habitDao.update(HabitData(habit))
+            loadHabitList()
+        }
+    }
 }
