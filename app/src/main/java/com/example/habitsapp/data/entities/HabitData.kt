@@ -15,7 +15,7 @@ data class HabitData(
 ) {
     //used to create a HabitData object to add to the database
     constructor(habit: Habit): this(
-        null,
+        habit.id,
         habit.name,
         habit.successStreak,
         habit.reminder.isActive,

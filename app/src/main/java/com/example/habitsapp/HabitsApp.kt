@@ -42,7 +42,10 @@ fun HabitsApp() {
                     }
                     else {
                         IconButton(onClick = { currentDestination = AppDestinations.HABIT_EDIT }) { Text("EDT") }
-                        IconButton(onClick = {}) { Text("DEL") }
+                        IconButton(onClick = {
+                            viewModel.deleteHabitAndReload(focusedHabit.value!!)
+                            focusedHabit.value = null
+                        }) { Text("DEL") }
                     }
                 }
             },
