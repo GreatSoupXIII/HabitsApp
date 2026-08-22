@@ -5,14 +5,14 @@ import java.time.LocalDate
 
 data class HabitHistoryEntry (
     val id: Int? = null,
+    val habitId: Int,
     val date: LocalDate = LocalDate.now()
 ) {
     constructor(habitHistoryEntryData: HabitHistoryEntryData): this(
         habitHistoryEntryData.id,
-        LocalDate.of(
-            habitHistoryEntryData.year,
-            habitHistoryEntryData.month,
-            habitHistoryEntryData.day
+        habitHistoryEntryData.habitId,
+        LocalDate.parse(
+            habitHistoryEntryData.date
         )
     )
 }
