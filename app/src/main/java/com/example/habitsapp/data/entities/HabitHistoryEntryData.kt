@@ -19,6 +19,6 @@ data class HabitHistoryEntryData(
     constructor(habitHistoryEntry: HabitHistoryEntry): this(
         habitHistoryEntry.id,
         habitHistoryEntry.habitId,
-        habitHistoryEntry.date.format(DateTimeFormatter.ISO_DATE_TIME)
+        habitHistoryEntry.date.format(DateTimeFormatter.ISO_DATE)
     )
 }
