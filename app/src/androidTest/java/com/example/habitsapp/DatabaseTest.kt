@@ -8,6 +8,7 @@ import androidx.test.ext.junit.runners.AndroidJUnit4
 import com.example.habitsapp.data.AppDatabase
 import com.example.habitsapp.data.dao.HabitDao
 import com.example.habitsapp.data.entities.HabitData
+import com.example.habitsapp.data.entities.HabitHistoryEntryData
 import kotlinx.coroutines.test.runTest
 import org.junit.After
 
@@ -42,14 +43,16 @@ class DatabaseTest {
         val habit = HabitData(
             1,
                 "Сыграть в Гвинт",
-            3,
             true,
             8,
             0
         )
         habitDao.insert(habit)
         val getResponse = habitDao.getAll()
-        assertEquals(habit,getResponse.single())
+        assertEquals(
+            mapOf(Pair(habit, listOf<HabitHistoryEntryData>())),
+            getResponse
+        )
         habitDao.delete(habit)
         val getResponseAfterDelete = habitDao.getAll()
         assertEquals(true, getResponseAfterDelete.isEmpty())
@@ -61,7 +64,6 @@ class DatabaseTest {
         val habit = HabitData(
             2,
             "Сыграть в Хартстоун",
-            3,
             true,
             8,
             0
@@ -78,7 +80,6 @@ class DatabaseTest {
         val habit = HabitData(
             3,
             "Сыграть в МтГ",
-            3,
             true,
             8,
             0
@@ -87,13 +88,16 @@ class DatabaseTest {
         val newHabit = HabitData(
             3,
             "Не играть в МтГ",
-            123,
             false,
             8,
             0
         )
         habitDao.update(newHabit)
         val getResponseAfterEdit = habitDao.getAll()
-        assertEquals(newHabit, getResponseAfterEdit.single())
+
+        assertEquals(
+            mapOf(Pair(newHabit, listOf<HabitHistoryEntryData>())),
+            getResponseAfterEdit
+        )
     }
 }

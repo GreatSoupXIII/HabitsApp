@@ -8,7 +8,6 @@ import com.example.habitsapp.models.Habit
 data class HabitData(
     @PrimaryKey val id: Int?,
     val name: String,
-    val successStreak: Int,
     var isReminderActive: Boolean,
     var hour: Int,
     var minute: Int
@@ -17,7 +16,6 @@ data class HabitData(
     constructor(habit: Habit): this(
         habit.id,
         habit.name,
-        habit.successStreak,
         habit.reminder.isActive,
         habit.reminder.hour,
         habit.reminder.minute

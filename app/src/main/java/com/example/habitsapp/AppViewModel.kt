@@ -27,8 +27,8 @@ class AppViewModel(application: Application): AndroidViewModel(application) {
             habitsList.clear()
             //translate all HabitData objects from the database
             //to format used by the application
-            for(habitData: HabitData in habitDataList) {
-                habitsList.add(Habit(habitData))
+            habitDataList.map {
+                habitsList.add(Habit(it.key, it.value))
             }
         }
         return habitsList

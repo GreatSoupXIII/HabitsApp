@@ -10,6 +10,7 @@ import com.example.habitsapp.data.AppDatabase
 import com.example.habitsapp.data.dao.HabitDao
 import com.example.habitsapp.data.entities.HabitData
 import com.example.habitsapp.models.Habit
+import com.example.habitsapp.models.HabitHistory
 import com.example.habitsapp.models.Reminder
 import kotlinx.coroutines.test.runTest
 import org.junit.After
@@ -26,8 +27,9 @@ class DatabaseAndAppTest {
     val habitsList = mutableStateListOf<Habit>()
 
     val habit = Habit(
+        1,
         "Написать 50 слов",
-        122,
+        HabitHistory(),
         Reminder(
             false,
             19,
@@ -44,15 +46,15 @@ class DatabaseAndAppTest {
         habitDao = db.habitDao()
     }
 
-    private fun loadHabitList(): List<Habit> {
+    fun loadHabitList(): List<Habit> {
         runTest {
             val habitDataList = habitDao.getAll()
 
             habitsList.clear()
             //translate all HabitData objects from the database
             //to format used by the application
-            for(habitData: HabitData in habitDataList) {
-                habitsList.add(Habit(habitData))
+            habitDataList.map {
+                habitsList.add(Habit(it.key, it.value))
             }
         }
         return habitsList
