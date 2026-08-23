@@ -17,6 +17,7 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.example.habitsapp.components.HabitListItem
 import com.example.habitsapp.models.Habit
+import com.example.habitsapp.models.HabitHistory
 import com.example.habitsapp.models.Reminder
 
 @Composable
@@ -65,8 +66,8 @@ fun HabitList(
 fun HabitListPreview() {
     //test data
     val habitList: List<Habit> = listOf(
-        Habit(1, "Сделать 1 отжимание", 2, Reminder(false, 5, 30)),
-        Habit(2, "Сыграть в Гвинт", 999, Reminder(true, 5, 30))
+        Habit(1, "Сделать 1 отжимание", HabitHistory(), Reminder(false, 5, 30)),
+        Habit(2, "Сыграть в Гвинт", HabitHistory(), Reminder(true, 5, 30))
     )
 
     val focusedHabit: MutableState<Habit?> = remember { mutableStateOf(habitList[0]) }

@@ -24,6 +24,7 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.example.habitsapp.R
 import com.example.habitsapp.models.Habit
+import com.example.habitsapp.models.HabitHistory
 import com.example.habitsapp.models.Reminder
 
 @Composable
@@ -84,7 +85,7 @@ fun HabitAdd(
             Habit(
                 null,
                 habitName.value,
-                0,
+                HabitHistory(),
                 Reminder(
                     isReminderActive.value,
                     reminderHours.value,

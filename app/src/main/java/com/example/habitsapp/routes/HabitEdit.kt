@@ -24,6 +24,7 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.example.habitsapp.R
 import com.example.habitsapp.models.Habit
+import com.example.habitsapp.models.HabitHistory
 import com.example.habitsapp.models.Reminder
 
 @Composable
@@ -85,7 +86,7 @@ fun HabitEdit(
             Habit(
                 currentHabit.id,
                 habitName.value,
-                currentHabit.successStreak,
+                currentHabit.history,
                 Reminder(
                     isReminderActive.value,
                     reminderHours.value,
@@ -105,7 +106,7 @@ fun HabitEditPreview() {
         Habit(
             1,
             "Сделать 1 отжимание",
-            4,
+            HabitHistory(),
             Reminder(true, 8, 0)
         )
     ) {}

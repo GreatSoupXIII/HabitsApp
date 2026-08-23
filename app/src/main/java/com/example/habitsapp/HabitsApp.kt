@@ -19,6 +19,7 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.example.habitsapp.models.Habit
+import com.example.habitsapp.models.HabitHistory
 import com.example.habitsapp.models.Reminder
 import com.example.habitsapp.routes.HabitAdd
 import com.example.habitsapp.routes.HabitEdit
@@ -95,8 +96,8 @@ enum class AppDestinations(
 fun HabitsAppPreview() {
 
     val habitList: List<Habit> = listOf(
-        Habit(1, "Сделать 1 отжимание", 2, Reminder(false, 1, 20)),
-        Habit(2, "Сыграть в Гвинт", 999, Reminder(true, 5, 30))
+        Habit(1, "Сделать 1 отжимание", HabitHistory(), Reminder(false, 1, 20)),
+        Habit(2, "Сыграть в Гвинт", HabitHistory(), Reminder(true, 5, 30))
     )
 
     val focusedHabit: MutableState<Habit?> = remember { mutableStateOf(habitList[0]) }
