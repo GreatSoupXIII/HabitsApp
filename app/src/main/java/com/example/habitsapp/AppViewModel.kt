@@ -8,8 +8,11 @@ import androidx.room3.Room
 import androidx.sqlite.driver.bundled.BundledSQLiteDriver
 import com.example.habitsapp.data.AppDatabase
 import com.example.habitsapp.data.dao.HabitDao
+import com.example.habitsapp.data.dao.HabitHistoryEntryDao
 import com.example.habitsapp.data.entities.HabitData
+import com.example.habitsapp.data.entities.HabitHistoryEntryData
 import com.example.habitsapp.models.Habit
+import com.example.habitsapp.models.HabitHistoryEntry
 import kotlinx.coroutines.launch
 
 class AppViewModel(application: Application): AndroidViewModel(application) {
@@ -18,6 +21,7 @@ class AppViewModel(application: Application): AndroidViewModel(application) {
         .setDriver(BundledSQLiteDriver())
         .build()
     val habitDao: HabitDao = database.habitDao()
+    val habitHistoryEntryDao: HabitHistoryEntryDao = database.habitHistoryEntryDao()
     val habitsList = mutableStateListOf<Habit>()
 
     fun loadHabitList(): List<Habit> {
@@ -51,6 +55,20 @@ class AppViewModel(application: Application): AndroidViewModel(application) {
     fun updateHabitAndReload(habit: Habit) {
         viewModelScope.launch {
             habitDao.update(HabitData(habit))
+            loadHabitList()
+        }
+    }
+
+    fun addEntry(entry: HabitHistoryEntry) {
+        viewModelScope.launch {
+            habitHistoryEntryDao.insert(HabitHistoryEntryData(entry))
+            loadHabitList()
+        }
+    }
+
+    fun deleteEntry(entry: HabitHistoryEntry) {
+        viewModelScope.launch {
+            habitHistoryEntryDao.delete(HabitHistoryEntryData(entry))
             loadHabitList()
         }
     }
