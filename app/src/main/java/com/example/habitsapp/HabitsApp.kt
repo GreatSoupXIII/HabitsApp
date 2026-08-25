@@ -64,7 +64,9 @@ fun HabitsApp() {
                 Modifier.padding(innerPadding),
                 viewModel.loadHabitList(),
                 focusedHabit,
-                onClickHabit = {}
+                onClickHabit = {},
+                onMark = { habitHistoryEntry -> viewModel.addEntry(habitHistoryEntry) },
+                onUnmark = { habitHistoryEntry -> viewModel.deleteEntry(habitHistoryEntry) }
             )
             AppDestinations.HABIT_ADD -> HabitAdd(Modifier.padding(innerPadding)) {
                 habit -> viewModel.addHabitAndReload(habit)
@@ -128,7 +130,9 @@ fun HabitsAppPreview() {
                 Modifier.padding(innerPadding),
                 habitList,
                 focusedHabit,
-                onClickHabit = {}
+                onClickHabit = {},
+                onMark = {},
+                onUnmark = {}
             )
             AppDestinations.HABIT_ADD -> Text("TBD", Modifier.padding(innerPadding))
             AppDestinations.HABIT_EDIT -> Text("TBD", Modifier.padding(innerPadding))

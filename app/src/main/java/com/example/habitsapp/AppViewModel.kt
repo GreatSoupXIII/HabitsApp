@@ -18,6 +18,7 @@ import kotlinx.coroutines.launch
 class AppViewModel(application: Application): AndroidViewModel(application) {
     private val applicationContext = getApplication<Application>().applicationContext
     val database: AppDatabase = Room.databaseBuilder<AppDatabase>(applicationContext, "app-database")
+        .fallbackToDestructiveMigration(true)
         .setDriver(BundledSQLiteDriver())
         .build()
     val habitDao: HabitDao = database.habitDao()
