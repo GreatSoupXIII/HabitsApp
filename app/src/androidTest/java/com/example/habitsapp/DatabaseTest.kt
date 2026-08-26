@@ -7,6 +7,7 @@ import androidx.test.core.app.ApplicationProvider
 import androidx.test.ext.junit.runners.AndroidJUnit4
 import com.example.habitsapp.data.AppDatabase
 import com.example.habitsapp.data.dao.HabitDao
+import com.example.habitsapp.data.dao.HabitHistoryEntryDao
 import com.example.habitsapp.data.entities.HabitData
 import com.example.habitsapp.data.entities.HabitHistoryEntryData
 import kotlinx.coroutines.test.runTest
@@ -21,6 +22,7 @@ import org.junit.Before
 @RunWith(AndroidJUnit4::class)
 class DatabaseTest {
     private lateinit var habitDao: HabitDao
+    private lateinit var habitHistoryEntryDao: HabitHistoryEntryDao
     private lateinit var db: AppDatabase
 
     @Before
@@ -30,6 +32,7 @@ class DatabaseTest {
             .setDriver(BundledSQLiteDriver())
             .build()
         habitDao = db.habitDao()
+        habitHistoryEntryDao = db.habitHistoryEntryDao()
     }
 
     @After
@@ -97,6 +100,39 @@ class DatabaseTest {
 
         assertEquals(
             mapOf(Pair(newHabit, listOf<HabitHistoryEntryData>())),
+            getResponseAfterEdit
+        )
+    }
+
+    //it should be possible to delete all history entries
+    //with the same habitId
+    @Test
+    fun writeEntriesAndDeleteByHabitId() = runTest {
+        val habit = HabitData(
+            3,
+            "Не играть в МтГ",
+            false,
+            8,
+            0
+        )
+
+        val items = listOf(
+            HabitHistoryEntryData(3, 3, "2026-08-20"),
+            HabitHistoryEntryData(2, 3, "2026-08-19"),
+            HabitHistoryEntryData(1, 3, "2026-08-18"),
+        )
+
+        habitDao.insert(habit)
+        for(item: HabitHistoryEntryData in items) {
+            habitHistoryEntryDao.insert(item)
+        }
+
+        habitHistoryEntryDao.deleteByHabitId(habit.id!!)
+
+        val getResponseAfterEdit = habitDao.getAll()
+
+        assertEquals(
+            mapOf(Pair(habit, listOf<HabitHistoryEntryData>())),
             getResponseAfterEdit
         )
     }

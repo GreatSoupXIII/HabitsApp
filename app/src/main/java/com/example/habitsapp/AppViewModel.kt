@@ -49,6 +49,7 @@ class AppViewModel(application: Application): AndroidViewModel(application) {
     fun deleteHabitAndReload(habit: Habit) {
         viewModelScope.launch {
             habitDao.delete(HabitData(habit))
+            habitHistoryEntryDao.deleteByHabitId(habit.id!!)
             loadHabitList()
         }
     }

@@ -6,10 +6,6 @@
         <option name="selectionMode" value="DROPDOWN" />
         <DialogSelection />
       </SelectionState>
-      <SelectionState runConfigName="dataIntoObjects()">
-        <option name="selectionMode" value="DROPDOWN" />
-        <DialogSelection />
-      </SelectionState>
       <SelectionState runConfigName="DatabaseTest">
         <option name="selectionMode" value="DROPDOWN" />
         <DialogSelection />
@@ -23,6 +19,10 @@
         <DialogSelection />
       </SelectionState>
       <SelectionState runConfigName="addMultipleHabitsAndEntries()">
+        <option name="selectionMode" value="DROPDOWN" />
+        <DialogSelection />
+      </SelectionState>
+      <SelectionState runConfigName="writeEntriesAndDeleteByHabitId()">
         <option name="selectionMode" value="DROPDOWN" />
         <DialogSelection />
       </SelectionState>
