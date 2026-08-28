@@ -3,6 +3,7 @@ package com.example.habitsapp
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
@@ -15,6 +16,8 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.lifecycle.viewmodel.compose.viewModel
@@ -39,21 +42,37 @@ fun HabitsApp() {
             actions = {
                 if(currentDestination == AppDestinations.HABIT_LIST) {
                     if(focusedHabit.value == null) {
-                        IconButton(onClick = { currentDestination = AppDestinations.HABIT_ADD }) { Text("ADD") }
-                        IconButton(onClick = {}) { Text("MOR") }
+                        IconButton(onClick = { currentDestination = AppDestinations.HABIT_ADD }) { Icon(
+                            painterResource(R.drawable.add_24px),
+                            "Add a habit"
+                        ) }
+                        IconButton(onClick = {}) { Icon(
+                            painterResource(R.drawable.more_vert_24px),
+                            "More options"
+                        ) }
                     }
                     else {
-                        IconButton(onClick = { currentDestination = AppDestinations.HABIT_EDIT }) { Text("EDT") }
+                        IconButton(onClick = { currentDestination = AppDestinations.HABIT_EDIT }) { Icon(
+                            painterResource(R.drawable.edit_24px),
+                            "Edit a habit"
+                        ) }
                         IconButton(onClick = {
                             viewModel.deleteHabitAndReload(focusedHabit.value!!)
                             focusedHabit.value = null
-                        }) { Text("DEL") }
+                        }) { Icon(
+                            painterResource(R.drawable.delete_24px),
+                            "Delete a habit"
+                        ) }
                     }
                 }
             },
             navigationIcon = {
                 if (currentDestination != AppDestinations.HABIT_LIST) {
-                    IconButton(onClick = { currentDestination = AppDestinations.HABIT_LIST }) { Text("BCK") }
+                    IconButton(onClick = { currentDestination = AppDestinations.HABIT_LIST }) { Icon(
+                        painterResource(R.drawable.arrow_back_24px),
+                        "Go back",
+                        tint = Color.Unspecified
+                    ) }
                 }
             }
         ) },
@@ -102,6 +121,68 @@ fun HabitsAppPreview() {
         Habit(2, "Сыграть в Гвинт", HabitHistory(), Reminder(true, 5, 30))
     )
 
+    val focusedHabit: MutableState<Habit?> = remember { mutableStateOf(null) }
+
+    var currentDestination by rememberSaveable { mutableStateOf(AppDestinations.HABIT_LIST) }
+
+
+    Scaffold(
+        topBar = { TopAppBar(
+            title = { Text(stringResource(currentDestination.label)) },
+            actions = {
+                if(currentDestination == AppDestinations.HABIT_LIST) {
+                    if(focusedHabit.value == null) {
+                        IconButton(onClick = {}) { Icon(
+                            painterResource(R.drawable.add_24px),
+                            "Add a habit"
+                        ) }
+                        IconButton(onClick = {}) { Icon(
+                            painterResource(R.drawable.more_vert_24px),
+                            "More options"
+                        ) }
+                    }
+                    else {
+                        IconButton(onClick = {}) { Icon(
+                            painterResource(R.drawable.edit_24px),
+                            "Edit a habit"
+                        ) }
+                        IconButton(onClick = {}) { Icon(
+                            painterResource(R.drawable.delete_24px),
+                            "Delete a habit"
+                        ) }
+                    }
+                }
+            },
+        ) },
+        modifier = Modifier.fillMaxSize()
+    ) { innerPadding ->
+        when(currentDestination) {
+            AppDestinations.HABIT_LIST -> HabitList(
+                Modifier.padding(innerPadding),
+                habitList,
+                focusedHabit,
+                onClickHabit = {},
+                onMark = {},
+                onUnmark = {}
+            )
+            AppDestinations.HABIT_ADD -> Text("TBD", Modifier.padding(innerPadding))
+            AppDestinations.HABIT_EDIT -> Text("TBD", Modifier.padding(innerPadding))
+            AppDestinations.HABIT_INFO -> Text("TBD", Modifier.padding(innerPadding))
+        }
+
+    }
+}
+
+@OptIn(ExperimentalMaterial3Api::class)
+@Preview
+@Composable
+fun HabitsAppPreviewFocused() {
+
+    val habitList: List<Habit> = listOf(
+        Habit(1, "Сделать 1 отжимание", HabitHistory(), Reminder(false, 1, 20)),
+        Habit(2, "Сыграть в Гвинт", HabitHistory(), Reminder(true, 5, 30))
+    )
+
     val focusedHabit: MutableState<Habit?> = remember { mutableStateOf(habitList[0]) }
 
     var currentDestination by rememberSaveable { mutableStateOf(AppDestinations.HABIT_LIST) }
@@ -113,12 +194,24 @@ fun HabitsAppPreview() {
             actions = {
                 if(currentDestination == AppDestinations.HABIT_LIST) {
                     if(focusedHabit.value == null) {
-                        IconButton(onClick = { currentDestination = AppDestinations.HABIT_ADD }) { Text("ADD") }
-                        IconButton(onClick = {}) { Text("MOR") }
+                        IconButton(onClick = {}) { Icon(
+                            painterResource(R.drawable.add_24px),
+                            "Add a habit"
+                        ) }
+                        IconButton(onClick = {}) { Icon(
+                            painterResource(R.drawable.more_vert_24px),
+                            "More options"
+                        ) }
                     }
                     else {
-                        IconButton(onClick = { currentDestination = AppDestinations.HABIT_EDIT }) { Text("EDT") }
-                        IconButton(onClick = {}) { Text("DEL") }
+                        IconButton(onClick = {}) { Icon(
+                            painterResource(R.drawable.edit_24px),
+                            "Edit a habit"
+                        ) }
+                        IconButton(onClick = {}) { Icon(
+                            painterResource(R.drawable.delete_24px),
+                            "Delete a habit"
+                        ) }
                     }
                 }
             },

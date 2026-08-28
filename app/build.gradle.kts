@@ -52,6 +52,9 @@ dependencies {
     ksp(libs.androidx.room3.compiler)
 
     implementation(libs.androidx.lifecycle.viewmodel.compose)
+    //fix for icons
+    implementation(libs.androidx.appcompat.resources)
+    implementation(libs.androidx.appcompat)
 
     testImplementation(libs.junit)
     androidTestImplementation(platform(libs.androidx.compose.bom))
