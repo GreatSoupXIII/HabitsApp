@@ -26,11 +26,11 @@ class HabitHistoryTestSuccessStreak {
     @Test
     fun successStreak_isCorrect_NoGap() {
         val items: MutableList<HabitHistoryEntry> = mutableListOf(
-            HabitHistoryEntry(3, LocalDate.of(2026, 8, 20)),
-            HabitHistoryEntry(2, LocalDate.of(2026, 8, 19)),
-            HabitHistoryEntry(1, LocalDate.of(2026, 8, 18))
+            HabitHistoryEntry(3, 1, LocalDate.of(2026, 8, 20)),
+            HabitHistoryEntry(2, 1, LocalDate.of(2026, 8, 19)),
+            HabitHistoryEntry(1, 1, LocalDate.of(2026, 8, 18))
         )
-        val history = HabitHistory(items)
+        val history = HabitHistory(items, LocalDate.of(2026, 8, 20))
 
         assertEquals(3, history.getSuccessStreak())
     }
@@ -39,13 +39,13 @@ class HabitHistoryTestSuccessStreak {
     @Test
     fun successStreak_isCorrect_WithGap() {
         val items: MutableList<HabitHistoryEntry> = mutableListOf(
-            HabitHistoryEntry(3, LocalDate.of(2026, 8, 20)),
-            HabitHistoryEntry(2, LocalDate.of(2026, 8, 19)),
-            HabitHistoryEntry(2, LocalDate.of(2026, 8, 17)),
-            HabitHistoryEntry(2, LocalDate.of(2026, 8, 16)),
-            HabitHistoryEntry(1, LocalDate.of(2026, 8, 15))
+            HabitHistoryEntry(3, 1,LocalDate.of(2026, 8, 20)),
+            HabitHistoryEntry(2, 1,LocalDate.of(2026, 8, 19)),
+            HabitHistoryEntry(2, 1,LocalDate.of(2026, 8, 17)),
+            HabitHistoryEntry(2, 1,LocalDate.of(2026, 8, 16)),
+            HabitHistoryEntry(1, 1,LocalDate.of(2026, 8, 15))
         )
-        val history = HabitHistory(items)
+        val history = HabitHistory(items, LocalDate.of(2026, 8, 20))
 
         assertEquals(2, history.getSuccessStreak())
     }
@@ -54,14 +54,29 @@ class HabitHistoryTestSuccessStreak {
     @Test
     fun successStreak_isCorrect_WithGapMonth() {
         val items: MutableList<HabitHistoryEntry> = mutableListOf(
-            HabitHistoryEntry(3, LocalDate.of(2026, 8, 20)),
-            HabitHistoryEntry(2, LocalDate.of(2026, 8, 19)),
-            HabitHistoryEntry(2, LocalDate.of(2026, 8, 18)),
-            HabitHistoryEntry(2, LocalDate.of(2026, 7, 17)),
-            HabitHistoryEntry(1, LocalDate.of(2026, 7, 16))
+            HabitHistoryEntry(3, 1, LocalDate.of(2026, 8, 20)),
+            HabitHistoryEntry(2, 1, LocalDate.of(2026, 8, 19)),
+            HabitHistoryEntry(2, 1, LocalDate.of(2026, 8, 18)),
+            HabitHistoryEntry(2, 1, LocalDate.of(2026, 7, 17)),
+            HabitHistoryEntry(1, 1, LocalDate.of(2026, 7, 16))
         )
-        val history = HabitHistory(items)
+        val history = HabitHistory(items, LocalDate.of(2026, 8, 20))
 
         assertEquals(3, history.getSuccessStreak())
+    }
+
+    //check if getSuccessStreak still gets streak when there is no entry for today
+    //but with a mark for yesterday
+    @Test
+    fun successStreak_isCorrect_WithNoMarkTodayButYesterday() {
+        val items: MutableList<HabitHistoryEntry> = mutableListOf(
+            HabitHistoryEntry(2, 1, LocalDate.of(2026, 8, 19)),
+            HabitHistoryEntry(2, 1, LocalDate.of(2026, 8, 18)),
+            HabitHistoryEntry(2, 1, LocalDate.of(2026, 7, 16)),
+            HabitHistoryEntry(1, 1, LocalDate.of(2026, 7, 15))
+        )
+        val history = HabitHistory(items, LocalDate.of(2026, 8, 20))
+
+        assertEquals(2, history.getSuccessStreak())
     }
 }
