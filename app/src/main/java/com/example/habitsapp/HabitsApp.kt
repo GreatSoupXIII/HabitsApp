@@ -5,9 +5,11 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBar
+import androidx.compose.material3.TopAppBarColors
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.getValue
@@ -16,7 +18,6 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
@@ -66,12 +67,19 @@ fun HabitsApp() {
                     }
                 }
             },
+            colors = TopAppBarColors(
+                MaterialTheme.colorScheme.surfaceContainer,
+                MaterialTheme.colorScheme.surfaceContainer,
+                MaterialTheme.colorScheme.onSurface,
+                MaterialTheme.colorScheme.onSurface,
+                MaterialTheme.colorScheme.onSurface,
+                MaterialTheme.colorScheme.onSurface
+            ),
             navigationIcon = {
                 if (currentDestination != AppDestinations.HABIT_LIST) {
                     IconButton(onClick = { currentDestination = AppDestinations.HABIT_LIST }) { Icon(
                         painterResource(R.drawable.arrow_back_24px),
-                        "Go back",
-                        tint = Color.Unspecified
+                        "Go back"
                     ) }
                 }
             }
@@ -153,6 +161,14 @@ fun HabitsAppPreview() {
                     }
                 }
             },
+            colors = TopAppBarColors(
+                MaterialTheme.colorScheme.surfaceContainer,
+                MaterialTheme.colorScheme.surfaceContainer,
+                MaterialTheme.colorScheme.onSurface,
+                MaterialTheme.colorScheme.onSurface,
+                MaterialTheme.colorScheme.onSurface,
+                MaterialTheme.colorScheme.onSurface
+            )
         ) },
         modifier = Modifier.fillMaxSize()
     ) { innerPadding ->
@@ -215,6 +231,14 @@ fun HabitsAppPreviewFocused() {
                     }
                 }
             },
+            colors = TopAppBarColors(
+                MaterialTheme.colorScheme.surfaceContainer,
+                MaterialTheme.colorScheme.surfaceContainer,
+                MaterialTheme.colorScheme.onSurface,
+                MaterialTheme.colorScheme.onSurface,
+                MaterialTheme.colorScheme.onSurface,
+                MaterialTheme.colorScheme.onSurface
+            )
         ) },
         modifier = Modifier.fillMaxSize()
     ) { innerPadding ->

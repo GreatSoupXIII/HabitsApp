@@ -68,7 +68,7 @@ fun HabitAdd(
                 else reminderHours.value = value.toInt()
             },
             keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number),
-            label = { Text("Часы") },
+            label = { Text("Часы") }
         )
         OutlinedTextField(
             modifier = Modifier.fillMaxWidth(),
@@ -79,7 +79,7 @@ fun HabitAdd(
                 else reminderMinutes.value = value.toInt()
             },
             keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number),
-            label = { Text("Минуты") },
+            label = { Text("Минуты") }
         )
         Button(onClick = { onAddHabit(
             Habit(

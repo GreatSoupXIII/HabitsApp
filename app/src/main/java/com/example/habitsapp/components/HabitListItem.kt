@@ -15,7 +15,6 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
@@ -41,7 +40,10 @@ fun HabitListItem(
 
     Row(
         modifier = Modifier
-            .background(color = if(focused) MaterialTheme.colorScheme.primary else Color(0x60888888))
+            .background(color =
+                if(focused) MaterialTheme.colorScheme.secondaryContainer
+                else MaterialTheme.colorScheme.surfaceContainerHigh
+            )
             .combinedClickable(
                 onClick = onClick,
                 onLongClick = onLongClick
@@ -54,12 +56,15 @@ fun HabitListItem(
         Column(
             verticalArrangement = Arrangement.spacedBy(5.dp)
         ) {
-            Text(habit.name)
+            Text(
+                habit.name,
+                color = MaterialTheme.colorScheme.onSurface
+            )
             Text(
                 text =
                     "Серия выполнений: " +
                     habit.history.getSuccessStreak().toString(),
-                color = Color.Unspecified.copy(alpha = 0.7f)
+                color = MaterialTheme.colorScheme.onSurfaceVariant
             )
         }
         IconButton(
