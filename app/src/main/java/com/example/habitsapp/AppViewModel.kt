@@ -46,10 +46,14 @@ class AppViewModel(application: Application): AndroidViewModel(application) {
         }
     }
 
-    fun deleteHabitAndReload(habit: Habit) {
+    fun deleteHabitsAndReload(habits: List<Habit>) {
+        val ids = habits.map {
+            it.id!!
+        }
+
         viewModelScope.launch {
-            habitDao.delete(HabitData(habit))
-            habitHistoryEntryDao.deleteByHabitId(habit.id!!)
+            habitDao.delete(ids)
+            habitHistoryEntryDao.deleteByHabitIds(ids)
             loadHabitList()
         }
     }

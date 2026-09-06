@@ -56,7 +56,7 @@ class DatabaseTest {
             mapOf(Pair(habit, listOf<HabitHistoryEntryData>())),
             getResponse
         )
-        habitDao.delete(habit)
+        habitDao.delete(listOf(habit.id!!))
         val getResponseAfterDelete = habitDao.getAll()
         assertEquals(true, getResponseAfterDelete.isEmpty())
     }
@@ -72,7 +72,7 @@ class DatabaseTest {
             0
         )
         habitDao.insert(habit)
-        habitDao.delete(habit)
+        habitDao.delete(listOf(habit.id!!))
         val getResponseAfterDelete = habitDao.getAll()
         assertEquals(true, getResponseAfterDelete.isEmpty())
     }
@@ -127,12 +127,82 @@ class DatabaseTest {
             habitHistoryEntryDao.insert(item)
         }
 
-        habitHistoryEntryDao.deleteByHabitId(habit.id!!)
+        habitHistoryEntryDao.deleteByHabitIds(listOf(habit.id!!))
 
         val getResponseAfterEdit = habitDao.getAll()
 
         assertEquals(
             mapOf(Pair(habit, listOf<HabitHistoryEntryData>())),
+            getResponseAfterEdit
+        )
+    }
+
+    //the database should be empty after multiple habits are inserted and deleted
+    @Test
+    fun writeMultipleHabitsAndDelete() = runTest {
+        val habit1 = HabitData(
+            2,
+            "Сыграть в Хартстоун",
+            true,
+            8,
+            0
+        )
+        val habit2 = HabitData(
+            3,
+            "Сыграть в Гвинт",
+            true,
+            8,
+            0
+        )
+        habitDao.insert(habit1)
+        habitDao.insert(habit2)
+        habitDao.delete(listOf(habit1.id!!, habit2.id!!))
+        val getResponseAfterDelete = habitDao.getAll()
+        assertEquals(true, getResponseAfterDelete.isEmpty())
+    }
+
+    //it should be possible to delete history entries
+    //with the same habitId for multiple habits
+    @Test
+    fun writeEntriesAndDeleteByMultipleHabitIds() = runTest {
+        val habit1 = HabitData(
+            2,
+            "Не играть в МтГ",
+            false,
+            8,
+            0
+        )
+
+        val habit2 = HabitData(
+            3,
+            "Играть в МтГ",
+            false,
+            8,
+            0
+        )
+
+        val items = listOf(
+            HabitHistoryEntryData(3, 2, "2026-08-20"),
+            HabitHistoryEntryData(2, 2, "2026-08-19"),
+            HabitHistoryEntryData(1, 2, "2026-08-18"),
+            HabitHistoryEntryData(6, 3, "2026-08-20"),
+            HabitHistoryEntryData(5, 3, "2026-08-19"),
+            HabitHistoryEntryData(4, 3, "2026-08-18"),
+        )
+
+        habitDao.insert(habit1)
+        habitDao.insert(habit2)
+
+        for(item: HabitHistoryEntryData in items) {
+            habitHistoryEntryDao.insert(item)
+        }
+
+        habitHistoryEntryDao.deleteByHabitIds(listOf(habit1.id!!, habit2.id!!))
+
+        val getResponseAfterEdit = habitDao.getAll()
+
+        assertEquals(
+            mapOf(Pair(habit1, listOf<HabitHistoryEntryData>()), Pair(habit2, listOf())),
             getResponseAfterEdit
         )
     }

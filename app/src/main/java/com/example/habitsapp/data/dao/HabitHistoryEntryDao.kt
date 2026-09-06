@@ -17,8 +17,8 @@ interface HabitHistoryEntryDao {
     @Query(
         """
             DELETE FROM habitHistoryEntryData
-            WHERE habitId = :habitId
+            WHERE habitId IN (:habitIds)
         """
     )
-    suspend fun deleteByHabitId(habitId: Int)
+    suspend fun deleteByHabitIds(habitIds: List<Int>)
 }

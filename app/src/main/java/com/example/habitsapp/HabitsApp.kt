@@ -11,8 +11,8 @@ import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBar
 import androidx.compose.material3.TopAppBarColors
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateListOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.saveable.rememberSaveable
@@ -24,10 +24,12 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.example.habitsapp.models.Habit
 import com.example.habitsapp.models.HabitHistory
+import com.example.habitsapp.models.HabitHistoryEntry
 import com.example.habitsapp.models.Reminder
 import com.example.habitsapp.routes.HabitAdd
 import com.example.habitsapp.routes.HabitEdit
 import com.example.habitsapp.routes.HabitList
+import java.time.LocalDate
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -35,14 +37,14 @@ fun HabitsApp() {
     var currentDestination by rememberSaveable { mutableStateOf(AppDestinations.HABIT_LIST) }
     val viewModel: AppViewModel = viewModel()
 
-    val focusedHabit: MutableState<Habit?> = remember { mutableStateOf(null) }
+    val focusedHabits = remember { mutableStateListOf<Habit>() }
 
     Scaffold(
         topBar = { TopAppBar(
             title = { Text(stringResource(currentDestination.label)) },
             actions = {
                 if(currentDestination == AppDestinations.HABIT_LIST) {
-                    if(focusedHabit.value == null) {
+                    if(focusedHabits.isEmpty()) {
                         IconButton(onClick = { currentDestination = AppDestinations.HABIT_ADD }) { Icon(
                             painterResource(R.drawable.add_24px),
                             "Add a habit"
@@ -52,14 +54,23 @@ fun HabitsApp() {
                             "More options"
                         ) }
                     }
-                    else {
+                    else if (focusedHabits.size == 1) {
                         IconButton(onClick = { currentDestination = AppDestinations.HABIT_EDIT }) { Icon(
                             painterResource(R.drawable.edit_24px),
                             "Edit a habit"
                         ) }
                         IconButton(onClick = {
-                            viewModel.deleteHabitAndReload(focusedHabit.value!!)
-                            focusedHabit.value = null
+                            viewModel.deleteHabitsAndReload(focusedHabits.toList())
+                            focusedHabits.clear()
+                        }) { Icon(
+                            painterResource(R.drawable.delete_24px),
+                            "Delete a habit"
+                        ) }
+                    }
+                    else {
+                        IconButton(onClick = {
+                            viewModel.deleteHabitsAndReload(focusedHabits.toList())
+                            focusedHabits.clear()
                         }) { Icon(
                             painterResource(R.drawable.delete_24px),
                             "Delete a habit"
@@ -90,7 +101,7 @@ fun HabitsApp() {
             AppDestinations.HABIT_LIST -> HabitList(
                 Modifier.padding(innerPadding),
                 viewModel.loadHabitList(),
-                focusedHabit,
+                focusedHabits,
                 onClickHabit = {},
                 onMark = { habitHistoryEntry -> viewModel.addEntry(habitHistoryEntry) },
                 onUnmark = { habitHistoryEntry -> viewModel.deleteEntry(habitHistoryEntry) }
@@ -99,10 +110,10 @@ fun HabitsApp() {
                 habit -> viewModel.addHabitAndReload(habit)
                 currentDestination = AppDestinations.HABIT_LIST
             }
-            AppDestinations.HABIT_EDIT -> HabitEdit(Modifier.padding(innerPadding), focusedHabit.value!!) {
+            AppDestinations.HABIT_EDIT -> HabitEdit(Modifier.padding(innerPadding), focusedHabits[0]) {
                 habit -> viewModel.updateHabitAndReload(habit)
                 currentDestination = AppDestinations.HABIT_LIST
-                focusedHabit.value = null
+                focusedHabits.clear()
             }
             AppDestinations.HABIT_INFO -> Text("TBD", Modifier.padding(innerPadding))
         }
@@ -122,14 +133,15 @@ enum class AppDestinations(
 @OptIn(ExperimentalMaterial3Api::class)
 @Preview
 @Composable
-fun HabitsAppPreview() {
+fun HabitsAppFocusedOnePreview() {
 
     val habitList: List<Habit> = listOf(
-        Habit(1, "Сделать 1 отжимание", HabitHistory(), Reminder(false, 1, 20)),
-        Habit(2, "Сыграть в Гвинт", HabitHistory(), Reminder(true, 5, 30))
+        Habit(1, "Сделать 1 приседание", HabitHistory(listOf(HabitHistoryEntry(1, 1))), Reminder(true, 5, 30)),
+        Habit(2, "Сделать 1 отжимание", HabitHistory(listOf(HabitHistoryEntry(1, 2, LocalDate.of(1990, 1, 1)))), Reminder(false, 5, 30)),
+        Habit(3, "Сыграть в Гвинт", HabitHistory(), Reminder(true, 5, 30))
     )
 
-    val focusedHabit: MutableState<Habit?> = remember { mutableStateOf(null) }
+    val focusedHabits = remember { mutableStateListOf<Habit>(habitList[0]) }
 
     var currentDestination by rememberSaveable { mutableStateOf(AppDestinations.HABIT_LIST) }
 
@@ -139,7 +151,7 @@ fun HabitsAppPreview() {
             title = { Text(stringResource(currentDestination.label)) },
             actions = {
                 if(currentDestination == AppDestinations.HABIT_LIST) {
-                    if(focusedHabit.value == null) {
+                    if(!focusedHabits.isEmpty()) {
                         IconButton(onClick = {}) { Icon(
                             painterResource(R.drawable.add_24px),
                             "Add a habit"
@@ -176,7 +188,7 @@ fun HabitsAppPreview() {
             AppDestinations.HABIT_LIST -> HabitList(
                 Modifier.padding(innerPadding),
                 habitList,
-                focusedHabit,
+                focusedHabits,
                 onClickHabit = {},
                 onMark = {},
                 onUnmark = {}
@@ -192,14 +204,15 @@ fun HabitsAppPreview() {
 @OptIn(ExperimentalMaterial3Api::class)
 @Preview
 @Composable
-fun HabitsAppPreviewFocused() {
+fun HabitsAppPreviewFocusedMany() {
 
     val habitList: List<Habit> = listOf(
-        Habit(1, "Сделать 1 отжимание", HabitHistory(), Reminder(false, 1, 20)),
-        Habit(2, "Сыграть в Гвинт", HabitHistory(), Reminder(true, 5, 30))
+        Habit(1, "Сделать 1 приседание", HabitHistory(listOf(HabitHistoryEntry(1, 1))), Reminder(true, 5, 30)),
+        Habit(2, "Сделать 1 отжимание", HabitHistory(listOf(HabitHistoryEntry(1, 2, LocalDate.of(1990, 1, 1)))), Reminder(false, 5, 30)),
+        Habit(3, "Сыграть в Гвинт", HabitHistory(), Reminder(true, 5, 30))
     )
 
-    val focusedHabit: MutableState<Habit?> = remember { mutableStateOf(habitList[0]) }
+    val focusedHabits = remember { mutableStateListOf(habitList[0], habitList[2]) }
 
     var currentDestination by rememberSaveable { mutableStateOf(AppDestinations.HABIT_LIST) }
 
@@ -209,7 +222,7 @@ fun HabitsAppPreviewFocused() {
             title = { Text(stringResource(currentDestination.label)) },
             actions = {
                 if(currentDestination == AppDestinations.HABIT_LIST) {
-                    if(focusedHabit.value == null) {
+                    if(!focusedHabits.isEmpty()) {
                         IconButton(onClick = {}) { Icon(
                             painterResource(R.drawable.add_24px),
                             "Add a habit"
@@ -246,7 +259,7 @@ fun HabitsAppPreviewFocused() {
             AppDestinations.HABIT_LIST -> HabitList(
                 Modifier.padding(innerPadding),
                 habitList,
-                focusedHabit,
+                focusedHabits,
                 onClickHabit = {},
                 onMark = {},
                 onUnmark = {}
