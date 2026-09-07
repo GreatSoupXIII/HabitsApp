@@ -7,6 +7,7 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.requiredSize
 import androidx.compose.foundation.layout.size
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
@@ -16,6 +17,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.example.habitsapp.R
@@ -40,9 +42,10 @@ fun HabitListItem(
 
     Row(
         modifier = Modifier
-            .background(color =
-                if(focused) MaterialTheme.colorScheme.secondaryContainer
-                else MaterialTheme.colorScheme.surfaceContainerHigh
+            .background(
+                color =
+                    if (focused) MaterialTheme.colorScheme.secondaryContainer
+                    else MaterialTheme.colorScheme.surfaceContainerHigh
             )
             .combinedClickable(
                 onClick = onClick,
@@ -54,10 +57,13 @@ fun HabitListItem(
         verticalAlignment = Alignment.CenterVertically
     ) {
         Column(
-            verticalArrangement = Arrangement.spacedBy(5.dp)
+            verticalArrangement = Arrangement.spacedBy(5.dp),
+            modifier = Modifier.weight(1f)
         ) {
             Text(
                 habit.name,
+                overflow = TextOverflow.Ellipsis,
+                maxLines = 2,
                 color = MaterialTheme.colorScheme.onSurface
             )
             Text(
@@ -68,7 +74,9 @@ fun HabitListItem(
             )
         }
         IconButton(
-            onClick = if(marked) onUnmark else onMark
+            onClick = if(marked) onUnmark else onMark,
+            Modifier
+                .requiredSize(50.dp)
         )
         {
             if(marked) IconButton(onUnmark) {
@@ -107,5 +115,11 @@ fun HabitListItemMarkedPreview() {
 @Composable
 fun HabitListItemFocusedPreview() {
     val habit = Habit(1, "Сделать 1 отжимание", HabitHistory(), Reminder(true, 5, 30))
+    HabitListItem(habit, true, {}, {}, {}, {})
+}
+@Preview
+@Composable
+fun HabitListItemTwoLinePreview() {
+    val habit = Habit(1, "Это очень длинный текст который занимает 2 линии и может неправильно отобразиться и вообще ААААААААААААААААААААААААААААААААААААА", HabitHistory(), Reminder(true, 5, 30))
     HabitListItem(habit, true, {}, {}, {}, {})
 }
