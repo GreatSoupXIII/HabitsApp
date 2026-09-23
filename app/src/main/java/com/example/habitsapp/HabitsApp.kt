@@ -35,7 +35,7 @@ import java.time.LocalDate
 @Composable
 fun HabitsApp() {
     var currentDestination by rememberSaveable { mutableStateOf(AppDestinations.HABIT_LIST) }
-    val viewModel: AppViewModel = viewModel()
+    val viewModel: AppViewModel = viewModel(factory = AppViewModel.Factory)
 
     val focusedHabits = remember { mutableStateListOf<Habit>() }
 
