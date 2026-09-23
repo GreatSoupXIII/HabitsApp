@@ -19,7 +19,6 @@ import com.example.habitsapp.models.Habit
 import com.example.habitsapp.models.HabitHistoryEntry
 import com.example.habitsapp.notifications.NotificationsManager
 import kotlinx.coroutines.launch
-import java.util.jar.Manifest
 
 class AppViewModel(application: Application): AndroidViewModel(application) {
     private val applicationContext = getApplication<Application>().applicationContext
@@ -30,6 +29,7 @@ class AppViewModel(application: Application): AndroidViewModel(application) {
     val habitDao: HabitDao = database.habitDao()
     val habitHistoryEntryDao: HabitHistoryEntryDao = database.habitHistoryEntryDao()
 
+    //todo: make a call to repository here
     val habitsList = mutableStateListOf<Habit>()
 
 

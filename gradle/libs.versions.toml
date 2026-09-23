@@ -1,5 +1,5 @@
 [versions]
-agp = "9.3.2"
+agp = "9.3.3"
 appcompatResources = "1.8.0"
 coreKtx = "1.19.0"
 junit = "4.13.2"
@@ -12,6 +12,7 @@ composeBom = "2026.08.00"
 lifecycleViewmodelCompose = "2.11.0"
 room3Runtime = "3.0.1"
 sqliteBundled = "2.7.0"
+workRuntimeKtx = "2.11.2"
 
 [libraries]
 androidx-appcompat = { module = "androidx.appcompat:appcompat", version.ref = "appcompatResources" }
@@ -20,6 +21,7 @@ androidx-core-ktx = { group = "androidx.core", name = "core-ktx", version.ref = 
 androidx-lifecycle-viewmodel-compose = { module = "androidx.lifecycle:lifecycle-viewmodel-compose", version.ref = "lifecycleViewmodelCompose" }
 androidx-room3-compiler = { module = "androidx.room3:room3-compiler", version.ref = "room3Runtime" }
 androidx-room3-runtime = { module = "androidx.room3:room3-runtime", version.ref = "room3Runtime" }
+androidx-work-runtime-ktx = { module = "androidx.work:work-runtime-ktx", version.ref = "workRuntimeKtx" }
 junit = { group = "junit", name = "junit", version.ref = "junit" }
 androidx-junit = { group = "androidx.test.ext", name = "junit", version.ref = "junitVersion" }
 androidx-espresso-core = { group = "androidx.test.espresso", name = "espresso-core", version.ref = "espressoCore" }
