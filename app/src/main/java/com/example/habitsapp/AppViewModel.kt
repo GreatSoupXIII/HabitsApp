@@ -69,6 +69,10 @@ class AppViewModel(private val repository: HabitRepository): ViewModel() {
 //        }
 //    }
 
+    init {
+        repository.checkFailureStreaksAndNotify()
+    }
+
     fun loadHabitList(): List<Habit> {
         viewModelScope.launch {
             val habitDataList = repository.loadHabitList()

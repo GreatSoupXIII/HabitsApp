@@ -1,19 +1,29 @@
 package com.example.habitsapp.data
 
 import android.content.Context
+import androidx.room3.Room
+import androidx.sqlite.driver.bundled.BundledSQLiteDriver
+import androidx.work.ExistingPeriodicWorkPolicy
+import androidx.work.PeriodicWorkRequestBuilder
 import androidx.work.WorkManager
-import com.example.habitsapp.data.dao.HabitDao
-import com.example.habitsapp.data.dao.HabitHistoryEntryDao
 import com.example.habitsapp.data.entities.HabitData
 import com.example.habitsapp.data.entities.HabitHistoryEntryData
 import com.example.habitsapp.models.Habit
 import com.example.habitsapp.models.HabitHistoryEntry
+import com.example.habitsapp.worker.StreakUpdateWorker
+import java.util.concurrent.TimeUnit
 
 class AppRepository(
-    override val habitDao: HabitDao,
-    override val habitHistoryEntryDao: HabitHistoryEntryDao,
     context: Context
 ) : HabitRepository {
+
+    val database: AppDatabase = Room.databaseBuilder<AppDatabase>(context, "app-database")
+        .fallbackToDestructiveMigration(true)
+        .setDriver(BundledSQLiteDriver())
+        .build()
+
+    override val habitDao = database.habitDao()
+    override val habitHistoryEntryDao = database.habitHistoryEntryDao()
 
     override val workManager = WorkManager.getInstance(context)
 
@@ -54,6 +64,15 @@ class AppRepository(
     //todo: make it do what the name says
     override fun checkFailureStreaksAndNotify() {
 
+        //todo: change repeat interval from 1 minute to 1 day
+        val workRequestBuilder = PeriodicWorkRequestBuilder<StreakUpdateWorker>(1, TimeUnit.DAYS)
+            .setInitialDelay(1, TimeUnit.DAYS)
+            .build()
+        workManager.enqueueUniquePeriodicWork(
+            "Advice",
+            ExistingPeriodicWorkPolicy.KEEP,
+            workRequestBuilder
+        )
     }
 
 }
