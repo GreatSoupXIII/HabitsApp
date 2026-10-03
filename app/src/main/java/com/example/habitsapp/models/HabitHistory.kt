@@ -1,7 +1,9 @@
 package com.example.habitsapp.models
 
 import java.time.LocalDate
-import java.time.Period
+import java.time.temporal.ChronoUnit
+import kotlin.time.Duration.Companion.days
+import kotlin.time.DurationUnit
 
 data class HabitHistory (
     val items: List<HabitHistoryEntry> = listOf<HabitHistoryEntry>(),
@@ -17,7 +19,12 @@ data class HabitHistory (
         //so it adds an extra 1 to period check if today mark is missing
         if(items[0].date != today) extra = 1
         for(i in items.indices) {
-            if(Period.between(items[i].date, today) != Period.ofDays(i + extra)) break
+            if(
+                ChronoUnit.DAYS.between(
+                    items[i].date,
+                    today
+                ).days.toInt(DurationUnit.DAYS) != i + extra
+            ) break
             count++
         }
         return count
@@ -27,6 +34,9 @@ data class HabitHistory (
     //counting until today EXCLUDING
     fun getFailureStreak(): Int {
         return if(items.isEmpty() || items[0].date == today) 0
-            else Period.between(items[0].date, today.minusDays(1)).days
+            else ChronoUnit.DAYS.between(
+            items[0].date,
+            today.minusDays(1)
+            ).days.toInt(DurationUnit.DAYS)
     }
 }
