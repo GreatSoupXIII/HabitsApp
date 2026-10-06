@@ -60,13 +60,10 @@ class AppRepository(
     override fun cancelNotification() {
 
     }
-
-    //todo: make it do what the name says
+    
     override fun checkFailureStreaksAndNotify() {
 
-        //todo: change repeat interval from 1 minute to 1 day
-        val workRequestBuilder = PeriodicWorkRequestBuilder<StreakUpdateWorker>(1, TimeUnit.DAYS)
-            .setInitialDelay(1, TimeUnit.DAYS)
+        val workRequestBuilder = PeriodicWorkRequestBuilder<StreakUpdateWorker>(24, TimeUnit.HOURS)
             .build()
         workManager.enqueueUniquePeriodicWork(
             "Advice",

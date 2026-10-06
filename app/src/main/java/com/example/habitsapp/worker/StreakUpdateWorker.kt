@@ -31,7 +31,7 @@ class StreakUpdateWorker(appContext: Context, params: WorkerParameters )
         val channel = NotificationChannel(
             ADVICE_CHANNEL_ID,
             name,
-            NotificationManager.IMPORTANCE_LOW
+            NotificationManager.IMPORTANCE_DEFAULT
         )
 
         channel.description = descriptionText
