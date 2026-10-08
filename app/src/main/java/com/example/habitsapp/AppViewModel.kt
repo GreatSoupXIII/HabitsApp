@@ -11,7 +11,6 @@ import com.example.habitsapp.data.HabitRepository
 import com.example.habitsapp.models.Habit
 import com.example.habitsapp.models.HabitHistoryEntry
 import com.example.habitsapp.notifications.NotificationsManager
-import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 
 class AppViewModel(private val repository: HabitRepository): ViewModel() {
@@ -75,7 +74,7 @@ class AppViewModel(private val repository: HabitRepository): ViewModel() {
     }
 
     fun loadHabitList(): List<Habit> {
-        viewModelScope.launch(Dispatchers.IO) {
+        viewModelScope.launch {
             val habitDataList = repository.loadHabitList()
 
             habitsList.clear()
@@ -89,35 +88,35 @@ class AppViewModel(private val repository: HabitRepository): ViewModel() {
     }
 
     fun addHabitAndReload(habit: Habit) {
-        viewModelScope.launch(Dispatchers.IO) {
+        viewModelScope.launch {
             repository.addHabitAndReload(habit)
             loadHabitList()
         }
     }
 
     fun deleteHabitsAndReload(habits: List<Habit>) {
-        viewModelScope.launch(Dispatchers.IO) {
+        viewModelScope.launch {
             repository.deleteHabitsAndReload(habits)
             loadHabitList()
         }
     }
 
     fun updateHabitAndReload(habit: Habit) {
-        viewModelScope.launch(Dispatchers.IO) {
+        viewModelScope.launch {
             repository.updateHabitAndReload(habit)
             loadHabitList()
         }
     }
 
     fun addEntry(entry: HabitHistoryEntry) {
-        viewModelScope.launch(Dispatchers.IO) {
+        viewModelScope.launch {
             repository.addEntry(entry)
             loadHabitList()
         }
     }
 
     fun deleteEntry(entry: HabitHistoryEntry) {
-        viewModelScope.launch(Dispatchers.IO) {
+        viewModelScope.launch {
             repository.deleteEntry(entry)
             loadHabitList()
         }
