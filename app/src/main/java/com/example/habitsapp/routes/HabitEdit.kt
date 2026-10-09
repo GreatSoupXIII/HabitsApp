@@ -26,6 +26,7 @@ import com.example.habitsapp.R
 import com.example.habitsapp.models.Habit
 import com.example.habitsapp.models.HabitHistory
 import com.example.habitsapp.models.Reminder
+import java.time.LocalDate
 
 @Composable
 fun HabitEdit(
@@ -106,7 +107,7 @@ fun HabitEditPreview() {
         Habit(
             1,
             "Сделать 1 отжимание",
-            HabitHistory(),
+            HabitHistory(habitCreatedAtDate = LocalDate.of(1970, 1, 1)),
             Reminder(true, 8, 0)
         )
     ) {}

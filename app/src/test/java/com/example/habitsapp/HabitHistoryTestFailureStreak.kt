@@ -13,24 +13,24 @@ import java.time.LocalDate
  * See [testing documentation](http://d.android.com/tools/testing).
  */
 class HabitHistoryTestFailureStreak {
-    //check if getFailureStreak gets correct result when there are no entries
+    //check if getFailureStreak gets correct result when there are no entries but several days had already passed
     @Test
     fun failureStreak_isCorrect_None() {
         val items: MutableList<HabitHistoryEntry> = mutableListOf()
-        val history = HabitHistory(items, LocalDate.of(2026, 8, 20))
+        val history = HabitHistory(items, LocalDate.now().minusDays(3))
 
-        assertEquals(0, history.getFailureStreak())
+        assertEquals(2, history.getFailureStreak())
     }
 
     //check if getFailureStreak gets correct result when there is no failure streak
     @Test
     fun failureStreak_isCorrect_NoStreak() {
         val items: MutableList<HabitHistoryEntry> = mutableListOf(
-            HabitHistoryEntry(3, 1,LocalDate.of(2026, 8, 20)),
-            HabitHistoryEntry(2, 1,LocalDate.of(2026, 8, 19)),
-            HabitHistoryEntry(1, 1, LocalDate.of(2026, 8, 18))
+            HabitHistoryEntry(3, 1,LocalDate.now()),
+            HabitHistoryEntry(2, 1,LocalDate.now().minusDays(1)),
+            HabitHistoryEntry(1, 1, LocalDate.now().minusDays(2))
         )
-        val history = HabitHistory(items, LocalDate.of(2026, 8, 20))
+        val history = HabitHistory(items, LocalDate.of(1970, 1, 1))
 
         assertEquals(0, history.getFailureStreak())
     }
@@ -39,12 +39,10 @@ class HabitHistoryTestFailureStreak {
     @Test
     fun failureStreak_isCorrect_WithFailure() {
         val items: MutableList<HabitHistoryEntry> = mutableListOf(
-            HabitHistoryEntry(1, 1, LocalDate.of(2026, 8, 18)),
-            HabitHistoryEntry(2, 1, LocalDate.of(2026, 8, 16)),
-            HabitHistoryEntry(2, 1, LocalDate.of(2026, 8, 15)),
-            HabitHistoryEntry(1, 1, LocalDate.of(2026, 8, 14))
+            HabitHistoryEntry(2, 1,LocalDate.now().minusDays(2)),
+            HabitHistoryEntry(1, 1, LocalDate.now().minusDays(3))
         )
-        val history = HabitHistory(items, LocalDate.of(2026, 8, 20))
+        val history = HabitHistory(items, LocalDate.of(1970, 1, 1))
 
         assertEquals(1, history.getFailureStreak())
     }
@@ -52,12 +50,10 @@ class HabitHistoryTestFailureStreak {
     @Test
     fun failureStreak_isCorrect_WithNoMarkTodayButYesterday() {
         val items: MutableList<HabitHistoryEntry> = mutableListOf(
-            HabitHistoryEntry(2, 1, LocalDate.of(2026, 8, 19)),
-            HabitHistoryEntry(2, 1, LocalDate.of(2026, 8, 18)),
-            HabitHistoryEntry(2, 1, LocalDate.of(2026, 7, 16)),
-            HabitHistoryEntry(1, 1, LocalDate.of(2026, 7, 15))
+            HabitHistoryEntry(2, 1,LocalDate.now().minusDays(1)),
+            HabitHistoryEntry(1, 1, LocalDate.now().minusDays(2))
         )
-        val history = HabitHistory(items, LocalDate.of(2026, 8, 20))
+        val history = HabitHistory(items, LocalDate.of(1970, 1, 1))
 
         assertEquals(0, history.getFailureStreak())
     }

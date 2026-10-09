@@ -136,9 +136,31 @@ enum class AppDestinations(
 fun HabitsAppFocusedOnePreview() {
 
     val habitList: List<Habit> = listOf(
-        Habit(1, "Сделать 1 приседание", HabitHistory(listOf(HabitHistoryEntry(1, 1))), Reminder(true, 5, 30)),
-        Habit(2, "Сделать 1 отжимание", HabitHistory(listOf(HabitHistoryEntry(1, 2, LocalDate.of(1990, 1, 1)))), Reminder(false, 5, 30)),
-        Habit(3, "Сыграть в Гвинт", HabitHistory(), Reminder(true, 5, 30))
+        Habit(
+            1,
+            "Сделать 1 приседание",
+            HabitHistory(
+                listOf(HabitHistoryEntry(1, 1)),
+                LocalDate.of(1970, 1, 1)
+            ),
+            Reminder(true, 5, 30)
+        ),
+        Habit(
+            2,
+            "Сделать 1 отжимание",
+            HabitHistory(
+                listOf(HabitHistoryEntry(1, 2, LocalDate.of(1990, 1, 1))),
+                LocalDate.of(1970, 1, 1)
+            ),
+            Reminder(false, 5, 30)
+        ),
+        Habit(
+            3,
+            "Сыграть в Гвинт",
+            HabitHistory(
+                habitCreatedAtDate = LocalDate.of(1970, 1, 1)
+            ),
+            Reminder(true, 5, 30))
     )
 
     val focusedHabits = remember { mutableStateListOf<Habit>(habitList[0]) }
@@ -207,9 +229,31 @@ fun HabitsAppFocusedOnePreview() {
 fun HabitsAppPreviewFocusedMany() {
 
     val habitList: List<Habit> = listOf(
-        Habit(1, "Сделать 1 приседание", HabitHistory(listOf(HabitHistoryEntry(1, 1))), Reminder(true, 5, 30)),
-        Habit(2, "Сделать 1 отжимание", HabitHistory(listOf(HabitHistoryEntry(1, 2, LocalDate.of(1990, 1, 1)))), Reminder(false, 5, 30)),
-        Habit(3, "Сыграть в Гвинт", HabitHistory(), Reminder(true, 5, 30))
+        Habit(
+            1,
+            "Сделать 1 приседание",
+            HabitHistory(
+                listOf(HabitHistoryEntry(1, 1)),
+                LocalDate.of(1970, 1, 1)
+            ),
+            Reminder(true, 5, 30)
+        ),
+        Habit(
+            2,
+            "Сделать 1 отжимание",
+            HabitHistory(
+                listOf(HabitHistoryEntry(1, 2, LocalDate.of(1990, 1, 1))),
+                LocalDate.of(1970, 1, 1)
+            ),
+            Reminder(false, 5, 30)
+        ),
+        Habit(
+            3,
+            "Сыграть в Гвинт",
+            HabitHistory(
+                habitCreatedAtDate = LocalDate.of(1970, 1, 1)
+            ),
+            Reminder(true, 5, 30))
     )
 
     val focusedHabits = remember { mutableStateListOf(habitList[0], habitList[2]) }

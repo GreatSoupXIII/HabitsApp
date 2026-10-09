@@ -100,26 +100,51 @@ fun HabitListItem(
 @Preview
 @Composable
 fun HabitListItemPreview() {
-    val habit = Habit(1, "Сделать 1 отжимание", HabitHistory(), Reminder(true, 5, 30))
+    val habit = Habit(
+        1,
+        "Сделать 1 отжимание",
+        HabitHistory(habitCreatedAtDate = LocalDate.of(1970, 1, 1)),
+        Reminder(true, 5, 30)
+    )
     HabitListItem(habit, false,  {}, {}, {}, {})
 }
 
 @Preview
 @Composable
 fun HabitListItemMarkedPreview() {
-    val habit = Habit(1, "Сделать 1 отжимание", HabitHistory(listOf(HabitHistoryEntry(1, 1))), Reminder(true, 5, 30))
+    val habit = Habit(
+        1,
+        "Сделать 1 отжимание",
+        HabitHistory(
+            listOf(HabitHistoryEntry(1, 1)),
+            LocalDate.of(1970, 1, 1)
+        ),
+        Reminder(true, 5, 30)
+    )
     HabitListItem(habit, false,  {}, {}, {}, {})
 }
 
 @Preview
 @Composable
 fun HabitListItemFocusedPreview() {
-    val habit = Habit(1, "Сделать 1 отжимание", HabitHistory(), Reminder(true, 5, 30))
+    val habit = Habit(
+        1,
+        "Сделать 1 отжимание",
+        HabitHistory(
+            habitCreatedAtDate = LocalDate.of(1970, 1, 1)
+        ),
+        Reminder(true, 5, 30)
+    )
     HabitListItem(habit, true, {}, {}, {}, {})
 }
 @Preview
 @Composable
 fun HabitListItemTwoLinePreview() {
-    val habit = Habit(1, "Это очень длинный текст который занимает 2 линии и может неправильно отобразиться и вообще ААААААААААААААААААААААААААААААААААААА", HabitHistory(), Reminder(true, 5, 30))
+    val habit = Habit(
+        1,
+        "Это очень длинный текст который занимает 2 линии и может неправильно отобразиться и вообще ААААААААААААААААААААААААААААААААААААА",
+        HabitHistory(habitCreatedAtDate = LocalDate.of(1970, 1, 1)),
+        Reminder(true, 5, 30)
+    )
     HabitListItem(habit, true, {}, {}, {}, {})
 }

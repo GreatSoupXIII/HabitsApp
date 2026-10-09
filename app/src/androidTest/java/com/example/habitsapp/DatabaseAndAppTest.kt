@@ -34,7 +34,7 @@ class DatabaseAndAppTest {
     val habit = Habit(
         1,
         "Написать 50 слов",
-        HabitHistory(),
+        HabitHistory(habitCreatedAtDate = LocalDate.of(1970, 1, 1)),
         Reminder(
             false,
             19,
@@ -108,7 +108,8 @@ class DatabaseAndAppTest {
                     HabitHistoryEntry(3, 1, LocalDate.of(2026, 8, 20)),
                     HabitHistoryEntry(2, 1, LocalDate.of(2026, 8, 19)),
                     HabitHistoryEntry(1, 1, LocalDate.of(2026, 8, 16)),
-                )
+                ),
+                LocalDate.of(1970, 1, 1)
             ),
             Reminder(
                 false,
@@ -148,7 +149,8 @@ class DatabaseAndAppTest {
                         HabitHistoryEntry(6, 1, LocalDate.of(2026, 8, 20)),
                         HabitHistoryEntry(9, 1, LocalDate.of(2026, 8, 19)),
                         HabitHistoryEntry(4, 1, LocalDate.of(2026, 8, 16)),
-                    )
+                    ),
+                    LocalDate.of(1970, 1, 1)
                 ),
                 Reminder(
                     false,
@@ -164,7 +166,8 @@ class DatabaseAndAppTest {
                         HabitHistoryEntry(3, 2, LocalDate.of(2026, 8, 16)),
                         HabitHistoryEntry(7, 2, LocalDate.of(2026, 8, 13)),
                         HabitHistoryEntry(1, 2, LocalDate.of(2025, 8, 18)),
-                    )
+                    ),
+                    LocalDate.of(1970, 1, 1)
                 ),
                 Reminder(
                     false,
@@ -178,7 +181,7 @@ class DatabaseAndAppTest {
             Habit(
                 1,
                 "Написать 50 слов",
-                HabitHistory(),
+                HabitHistory(habitCreatedAtDate = LocalDate.of(1970, 1, 1)),
                 Reminder(
                     false,
                     19,
@@ -191,7 +194,7 @@ class DatabaseAndAppTest {
             Habit(
                 2,
                 "Сделать 1 отжимание",
-                HabitHistory(),
+                HabitHistory(habitCreatedAtDate = LocalDate.of(1970, 1, 1)),
                 Reminder(
                     false,
                     19,
@@ -227,7 +230,8 @@ class DatabaseAndAppTest {
                 items = listOf(
                     HabitHistoryEntry(3, 1, LocalDate.of(2026, 8, 20)),
                     HabitHistoryEntry(1, 1, LocalDate.of(2026, 8, 16)),
-                )
+                ),
+                LocalDate.of(1970, 1, 1)
             ),
             Reminder(
                 false,

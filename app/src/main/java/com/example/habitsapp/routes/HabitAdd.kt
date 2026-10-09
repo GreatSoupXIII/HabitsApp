@@ -26,6 +26,7 @@ import com.example.habitsapp.R
 import com.example.habitsapp.models.Habit
 import com.example.habitsapp.models.HabitHistory
 import com.example.habitsapp.models.Reminder
+import java.time.LocalDate
 
 @Composable
 fun HabitAdd(
@@ -85,7 +86,7 @@ fun HabitAdd(
             Habit(
                 null,
                 habitName.value,
-                HabitHistory(),
+                HabitHistory(habitCreatedAtDate = LocalDate.now()),
                 Reminder(
                     isReminderActive.value,
                     reminderHours.value,

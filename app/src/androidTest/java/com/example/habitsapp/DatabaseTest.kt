@@ -48,7 +48,8 @@ class DatabaseTest {
                 "Сыграть в Гвинт",
             true,
             8,
-            0
+            0,
+            "1970-01-01"
         )
         habitDao.insert(habit)
         val getResponse = habitDao.getAll()
@@ -69,7 +70,8 @@ class DatabaseTest {
             "Сыграть в Хартстоун",
             true,
             8,
-            0
+            0,
+            "1970-01-01"
         )
         habitDao.insert(habit)
         habitDao.delete(listOf(habit.id!!))
@@ -85,7 +87,8 @@ class DatabaseTest {
             "Сыграть в МтГ",
             true,
             8,
-            0
+            0,
+            "1970-01-01"
         )
         habitDao.insert(habit)
         val newHabit = HabitData(
@@ -93,7 +96,8 @@ class DatabaseTest {
             "Не играть в МтГ",
             false,
             8,
-            0
+            0,
+            "1970-01-01"
         )
         habitDao.update(newHabit)
         val getResponseAfterEdit = habitDao.getAll()
@@ -113,7 +117,8 @@ class DatabaseTest {
             "Не играть в МтГ",
             false,
             8,
-            0
+            0,
+            "1970-01-01"
         )
 
         val items = listOf(
@@ -145,14 +150,16 @@ class DatabaseTest {
             "Сыграть в Хартстоун",
             true,
             8,
-            0
+            0,
+            "1970-01-01"
         )
         val habit2 = HabitData(
             3,
             "Сыграть в Гвинт",
             true,
             8,
-            0
+            0,
+            "1970-01-01"
         )
         habitDao.insert(habit1)
         habitDao.insert(habit2)
@@ -170,7 +177,8 @@ class DatabaseTest {
             "Не играть в МтГ",
             false,
             8,
-            0
+            0,
+            "1970-01-01"
         )
 
         val habit2 = HabitData(
@@ -178,7 +186,8 @@ class DatabaseTest {
             "Играть в МтГ",
             false,
             8,
-            0
+            0,
+            "1970-01-01"
         )
 
         val items = listOf(

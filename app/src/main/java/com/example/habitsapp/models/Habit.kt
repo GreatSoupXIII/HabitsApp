@@ -20,7 +20,8 @@ data class Habit (
         HabitHistory(
             historyEntries.map {
                 HabitHistoryEntry(it.id, it.habitId, LocalDate.parse(it.date))
-            }
+            },
+            LocalDate.parse(habitData.createdAtDate)
         ),
         Reminder(
             habitData.isReminderActive,
