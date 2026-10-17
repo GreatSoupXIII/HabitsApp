@@ -1,6 +1,10 @@
 package com.example.habitsapp.data
 
+import android.app.AlarmManager
+import android.app.PendingIntent
 import android.content.Context
+import android.content.Intent
+import android.os.Build
 import androidx.room3.Room
 import androidx.sqlite.driver.bundled.BundledSQLiteDriver
 import androidx.work.ExistingPeriodicWorkPolicy
@@ -10,11 +14,14 @@ import com.example.habitsapp.data.entities.HabitData
 import com.example.habitsapp.data.entities.HabitHistoryEntryData
 import com.example.habitsapp.models.Habit
 import com.example.habitsapp.models.HabitHistoryEntry
+import com.example.habitsapp.reminder.ReminderReceiver
 import com.example.habitsapp.worker.StreakUpdateWorker
+import java.util.Calendar
 import java.util.concurrent.TimeUnit
+import kotlin.jvm.java
 
 class AppRepository(
-    context: Context
+    val context: Context
 ) : HabitRepository {
 
     val database: AppDatabase = Room.databaseBuilder<AppDatabase>(context, "app-database")
@@ -26,6 +33,8 @@ class AppRepository(
     override val habitHistoryEntryDao = database.habitHistoryEntryDao()
 
     override val workManager = WorkManager.getInstance(context)
+
+    val alarmMgr = context.getSystemService(Context.ALARM_SERVICE) as AlarmManager
 
     override suspend fun loadHabitList(): Map<HabitData, List<HabitHistoryEntryData>> = habitDao.getAll()
 
@@ -51,14 +60,46 @@ class AppRepository(
         habitHistoryEntryDao.delete(HabitHistoryEntryData(entry))
     }
 
-    //todo: make it create a repeating notification
-    override fun createNotification() {
+    override fun createReminder(habit: Habit) {
 
+        val alarmIntent = Intent(context, ReminderReceiver::class.java)
+            .putExtra("EXTRA_HABIT_ID", habit.id!!)
+            .putExtra("EXTRA_HABIT_NAME", habit.name)
+            .putExtra("EXTRA_HABIT_HOUR", habit.reminder.hour)
+            .putExtra("EXTRA_HABIT_MINUTE", habit.reminder.minute)
+            .let { intent ->
+                PendingIntent.getBroadcast(context, habit.id!!, intent, PendingIntent.FLAG_IMMUTABLE)
+            }
+
+        val calendar: Calendar = Calendar.getInstance().apply {
+            timeInMillis = System.currentTimeMillis()
+            set(Calendar.HOUR_OF_DAY, habit.reminder.hour)
+            set(Calendar.MINUTE, habit.reminder.minute)
+            set(Calendar.SECOND, 0)
+            //if alarm time ends up before current time, schedule for next day
+            if(timeInMillis < System.currentTimeMillis()) add(Calendar.DAY_OF_MONTH, 1)
+        }
+
+        //if app needs permission and doesn't have it, throw an exception
+        if(Build.VERSION.SDK_INT >= Build.VERSION_CODES.S && !alarmMgr.canScheduleExactAlarms()) {
+            //todo: notify that result is bad, probably with a throw
+            return //this is a temp fix
+        }
+
+        //otherwise it's good
+        alarmMgr.setExact(
+            AlarmManager.RTC_WAKEUP,
+            calendar.timeInMillis,
+            alarmIntent
+        )
     }
 
-    //todo: make it cancel a repeating notification
-    override fun cancelNotification() {
+    override fun cancelReminder(habitId: Int) {
+        val alarmIntent = Intent(context, ReminderReceiver::class.java).let { intent ->
+            PendingIntent.getBroadcast(context, habitId, intent, PendingIntent.FLAG_IMMUTABLE)
+        }
 
+        alarmMgr.cancel(alarmIntent)
     }
     
     override fun checkFailureStreaksAndNotify() {
@@ -71,5 +112,4 @@ class AppRepository(
             workRequestBuilder
         )
     }
-
 }

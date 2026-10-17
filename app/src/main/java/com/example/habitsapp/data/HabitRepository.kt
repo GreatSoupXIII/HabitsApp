@@ -28,10 +28,10 @@ interface HabitRepository {
     suspend fun deleteEntry(entry: HabitHistoryEntry)
 
     //this will make a repeating notification for a habit
-    fun createNotification()
+    fun createReminder(habit: Habit)
 
     //this will cancel a previously made notification for a habit
-    fun cancelNotification()
+    fun cancelReminder(habitId: Int)
 
     //this will check failure streaks
     //and make notifications if there are any that

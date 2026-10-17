@@ -121,4 +121,13 @@ class AppViewModel(private val repository: HabitRepository): ViewModel() {
             loadHabitList()
         }
     }
+
+    fun createReminder(habit: Habit) {
+        repository.createReminder(habit)
+    }
+
+    fun cancelReminder(habitId: Int) {
+        repository.cancelReminder(habitId)
+    }
+
 }

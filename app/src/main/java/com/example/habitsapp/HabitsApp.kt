@@ -108,10 +108,21 @@ fun HabitsApp() {
             )
             AppDestinations.HABIT_ADD -> HabitAdd(Modifier.padding(innerPadding)) {
                 habit -> viewModel.addHabitAndReload(habit)
+
+                //todo: find out how to have a habit ID before habit is in database
+//                if(habit.reminder.isActive) {
+//                    viewModel.createReminder(habit)
+//                } else viewModel.cancelReminder(habit.id!!)
+
                 currentDestination = AppDestinations.HABIT_LIST
             }
             AppDestinations.HABIT_EDIT -> HabitEdit(Modifier.padding(innerPadding), focusedHabits[0]) {
                 habit -> viewModel.updateHabitAndReload(habit)
+
+                if(habit.reminder.isActive) {
+                    viewModel.createReminder(habit)
+                } else viewModel.cancelReminder(habit.id!!)
+
                 currentDestination = AppDestinations.HABIT_LIST
                 focusedHabits.clear()
             }
