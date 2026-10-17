@@ -89,7 +89,10 @@ class AppViewModel(private val repository: HabitRepository): ViewModel() {
 
     fun addHabitAndReload(habit: Habit) {
         viewModelScope.launch {
-            repository.addHabitAndReload(habit)
+            val id = repository.addHabitAndReload(habit)
+            val habitWithId = habit
+            habitWithId.id = id.toInt() //todo: temporary fix, need to change type from Int to Long in 'id' field in Habit.kt and HabitData.kt
+            createReminder(habitWithId)
             loadHabitList()
         }
     }
@@ -97,6 +100,9 @@ class AppViewModel(private val repository: HabitRepository): ViewModel() {
     fun deleteHabitsAndReload(habits: List<Habit>) {
         viewModelScope.launch {
             repository.deleteHabitsAndReload(habits)
+            for (habit in habits) {
+                cancelReminder(habit.id!!)
+            }
             loadHabitList()
         }
     }
@@ -104,6 +110,7 @@ class AppViewModel(private val repository: HabitRepository): ViewModel() {
     fun updateHabitAndReload(habit: Habit) {
         viewModelScope.launch {
             repository.updateHabitAndReload(habit)
+            createReminder(habit)
             loadHabitList()
         }
     }

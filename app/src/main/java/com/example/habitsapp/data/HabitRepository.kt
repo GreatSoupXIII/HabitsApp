@@ -17,7 +17,7 @@ interface HabitRepository {
 
     suspend fun loadHabitList(): Map<HabitData, List<HabitHistoryEntryData>>
 
-    suspend fun addHabitAndReload(habit: Habit)
+    suspend fun addHabitAndReload(habit: Habit): Long
 
     suspend fun deleteHabitsAndReload(habits: List<Habit>)
 

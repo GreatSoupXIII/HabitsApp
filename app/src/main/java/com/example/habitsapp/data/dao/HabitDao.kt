@@ -18,7 +18,7 @@ interface HabitDao {
     suspend fun getAll(): Map<HabitData, List<HabitHistoryEntryData>>
 
     @Insert
-    suspend fun insert(habit: HabitData)
+    suspend fun insert(habit: HabitData): Long
 
     @Update
     suspend fun update(habit: HabitData)
