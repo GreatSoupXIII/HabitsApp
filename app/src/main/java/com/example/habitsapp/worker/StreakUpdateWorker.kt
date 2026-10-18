@@ -16,6 +16,7 @@ import com.example.habitsapp.models.Habit
 class StreakUpdateWorker(appContext: Context, params: WorkerParameters )
     : CoroutineWorker(appContext, params) {
 
+    private val context = appContext
     private val repository = AppRepository(appContext)
     val notificationManager = appContext.getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager?
     val ADVICE_CHANNEL_ID = "0"
@@ -51,9 +52,11 @@ class StreakUpdateWorker(appContext: Context, params: WorkerParameters )
                 val builder = NotificationCompat.Builder(applicationContext, ADVICE_CHANNEL_ID)
                     .setSmallIcon(R.drawable.ic_account_box)
                     .setContentTitle(habit.name)
-                    .setContentText("make this habit easy pls")
-                    .setStyle(NotificationCompat.BigTextStyle()
-                        .bigText("make this habit easy pls"))
+                    .setContentText(
+                        context.resources.getString(R.string.advice_1) +
+                                " ${habit.history.getFailureStreak()}" +
+                                context.resources.getString(R.string.advice_2)
+                    )
                     .setPriority(NotificationCompat.PRIORITY_DEFAULT)
 
                 with(NotificationManagerCompat.from(applicationContext)) {

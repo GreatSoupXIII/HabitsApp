@@ -2,12 +2,14 @@ package com.example.habitsapp
 
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
+import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
+import androidx.compose.material3.TextButton
 import androidx.compose.material3.TopAppBar
 import androidx.compose.material3.TopAppBarColors
 import androidx.compose.runtime.Composable
@@ -38,6 +40,7 @@ fun HabitsApp() {
     val viewModel: AppViewModel = viewModel(factory = AppViewModel.Factory)
 
     val focusedHabits = remember { mutableStateListOf<Habit>() }
+    val showDeleteDialog = remember { mutableStateOf(false) }
 
     Scaffold(
         topBar = { TopAppBar(
@@ -60,20 +63,18 @@ fun HabitsApp() {
                             "Edit a habit"
                         ) }
                         IconButton(onClick = {
-                            viewModel.deleteHabitsAndReload(focusedHabits.toList())
-                            focusedHabits.clear()
+                            showDeleteDialog.value = true
                         }) { Icon(
                             painterResource(R.drawable.delete_24px),
-                            "Delete a habit"
+                            "Delete selected habits"
                         ) }
                     }
                     else {
                         IconButton(onClick = {
-                            viewModel.deleteHabitsAndReload(focusedHabits.toList())
-                            focusedHabits.clear()
+                            showDeleteDialog.value = true
                         }) { Icon(
                             painterResource(R.drawable.delete_24px),
-                            "Delete a habit"
+                            "Delete selected habits"
                         ) }
                     }
                 }
@@ -117,7 +118,30 @@ fun HabitsApp() {
             }
             AppDestinations.HABIT_INFO -> Text("TBD", Modifier.padding(innerPadding))
         }
-
+        when {
+            showDeleteDialog.value -> {
+                AlertDialog(
+                    onDismissRequest = {
+                        showDeleteDialog.value = false
+                    },
+                    title = {
+                        if(focusedHabits.size > 1) Text(text = stringResource(R.string.delete_dialog_title_plural))
+                        else Text(text = stringResource(R.string.delete_dialog_title_single))
+                    },
+                    text = { Text(text = stringResource(R.string.delete_dialog_text)) },
+                    dismissButton = {
+                        TextButton(onClick = { showDeleteDialog.value = false }) { Text(stringResource(R.string.no)) }
+                    },
+                    confirmButton = {
+                        TextButton(onClick = {
+                            viewModel.deleteHabitsAndReload(focusedHabits.toList())
+                            focusedHabits.clear()
+                            showDeleteDialog.value = false
+                        }) { Text(stringResource(R.string.yes)) }
+                    }
+                )
+            }
+        }
     }
 }
 

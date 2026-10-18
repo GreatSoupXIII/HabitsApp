@@ -10,4 +10,12 @@
 
     <string name="advice_1">Вы не выполняли цель</string>
     <string name="advice_2">раз подряд. Может быть, стоит сделать цель проще?</string>
+
+    <string name="yes">Да</string>
+    <string name="no">Нет</string>
+
+    <string name="delete_dialog_title_single">Удалить привычку?</string>
+    <string name="delete_dialog_title_plural">Удалить привычки?</string>
+    <string name="delete_dialog_text">Это действие нельзя отменить.</string>
+
 </resources>
