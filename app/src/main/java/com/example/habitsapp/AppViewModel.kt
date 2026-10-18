@@ -10,7 +10,6 @@ import androidx.lifecycle.viewmodel.viewModelFactory
 import com.example.habitsapp.data.HabitRepository
 import com.example.habitsapp.models.Habit
 import com.example.habitsapp.models.HabitHistoryEntry
-import com.example.habitsapp.notifications.NotificationsManager
 import kotlinx.coroutines.launch
 
 class AppViewModel(private val repository: HabitRepository): ViewModel() {
@@ -25,49 +24,7 @@ class AppViewModel(private val repository: HabitRepository): ViewModel() {
         }
     }
 
-
-//    private val applicationContext = getApplication<Application>().applicationContext
-//    val database: AppDatabase = Room.databaseBuilder<AppDatabase>(applicationContext, "app-database")
-//        .fallbackToDestructiveMigration(true)
-//        .setDriver(BundledSQLiteDriver())
-//        .build()
-//    val habitDao: HabitDao = database.habitDao()
-//    val habitHistoryEntryDao: HabitHistoryEntryDao = database.habitHistoryEntryDao()
-
-    //todo: make a call to repository here
     val habitsList = mutableStateListOf<Habit>()
-
-
-    val notificationsManager = NotificationsManager()
-
-
-    // todo: the init block should be done with repository functions too
-//    init {
-//        notificationsManager.createAdviceChannel(applicationContext)
-//        notificationsManager.createNotificationChannel(applicationContext)
-//
-//        //todo: test action, remove it
-//        val builder = NotificationCompat.Builder(applicationContext, notificationsManager.ADVICE_CHANNEL_ID)
-//            .setSmallIcon(R.drawable.ic_account_box)
-//            .setContentTitle("My notification")
-//            .setContentText("Much longer text that cannot fit one line...")
-//            .setStyle(NotificationCompat.BigTextStyle()
-//                .bigText("Much longer text that cannot fit one line..."))
-//            .setPriority(NotificationCompat.PRIORITY_DEFAULT)
-//
-//
-//        with(NotificationManagerCompat.from(applicationContext)) {
-//            if (ActivityCompat.checkSelfPermission(
-//                    applicationContext,
-//                    android.Manifest.permission.POST_NOTIFICATIONS
-//                ) != PackageManager.PERMISSION_GRANTED
-//            ) {
-//                return@with
-//            }
-//            // notificationId is a unique int for each notification that you must define.
-//            notify(notificationsManager.getNewAdviceId(), builder.build())
-//        }
-//    }
 
     init {
         repository.checkFailureStreaksAndNotify()
