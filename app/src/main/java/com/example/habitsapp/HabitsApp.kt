@@ -24,6 +24,10 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.lifecycle.viewmodel.compose.viewModel
+import androidx.navigation.compose.NavHost
+import androidx.navigation.compose.composable
+import androidx.navigation.compose.currentBackStackEntryAsState
+import androidx.navigation.compose.rememberNavController
 import com.example.habitsapp.models.Habit
 import com.example.habitsapp.models.HabitHistory
 import com.example.habitsapp.models.HabitHistoryEntry
@@ -36,19 +40,29 @@ import java.time.LocalDate
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun HabitsApp() {
-    var currentDestination by rememberSaveable { mutableStateOf(AppDestinations.HABIT_LIST) }
     val viewModel: AppViewModel = viewModel(factory = AppViewModel.Factory)
+    val navController = rememberNavController()
+
+    val backStackEntry by navController.currentBackStackEntryAsState()
 
     val focusedHabits = remember { mutableStateListOf<Habit>() }
     val showDeleteDialog = remember { mutableStateOf(false) }
 
     Scaffold(
         topBar = { TopAppBar(
-            title = { Text(stringResource(currentDestination.label)) },
+            title = { Text(
+                when(backStackEntry?.destination?.route) {
+                    AppDestinations.HABIT_LIST.name -> stringResource(R.string.title_habit_list)
+                    AppDestinations.HABIT_ADD.name -> stringResource(R.string.title_habit_add)
+                    AppDestinations.HABIT_EDIT.name -> stringResource(R.string.title_habit_edit)
+                    AppDestinations.HABIT_INFO.name -> stringResource(R.string.title_habit_info)
+                    else -> stringResource(R.string.title_habit_list) //a crutch at app start
+                }
+            ) },
             actions = {
-                if(currentDestination == AppDestinations.HABIT_LIST) {
+                if(backStackEntry?.destination?.route == AppDestinations.HABIT_LIST.name) {
                     if(focusedHabits.isEmpty()) {
-                        IconButton(onClick = { currentDestination = AppDestinations.HABIT_ADD }) { Icon(
+                        IconButton(onClick = { navController.navigate(AppDestinations.HABIT_ADD.name) }) { Icon(
                             painterResource(R.drawable.add_24px),
                             "Add a habit"
                         ) }
@@ -58,7 +72,7 @@ fun HabitsApp() {
                         ) }
                     }
                     else if (focusedHabits.size == 1) {
-                        IconButton(onClick = { currentDestination = AppDestinations.HABIT_EDIT }) { Icon(
+                        IconButton(onClick = { navController.navigate(AppDestinations.HABIT_EDIT.name) }) { Icon(
                             painterResource(R.drawable.edit_24px),
                             "Edit a habit"
                         ) }
@@ -88,8 +102,9 @@ fun HabitsApp() {
                 MaterialTheme.colorScheme.onSurface
             ),
             navigationIcon = {
-                if (currentDestination != AppDestinations.HABIT_LIST) {
-                    IconButton(onClick = { currentDestination = AppDestinations.HABIT_LIST }) { Icon(
+                if (navController.currentDestination?.route != null &&
+                    navController.currentDestination?.route != AppDestinations.HABIT_LIST.name) {
+                    IconButton(onClick = { navController.popBackStack() }) { Icon(
                         painterResource(R.drawable.arrow_back_24px),
                         "Go back"
                     ) }
@@ -98,25 +113,33 @@ fun HabitsApp() {
         ) },
         modifier = Modifier.fillMaxSize()
     ) { innerPadding ->
-        when(currentDestination) {
-            AppDestinations.HABIT_LIST -> HabitList(
-                Modifier.padding(innerPadding),
-                viewModel.loadHabitList(),
-                focusedHabits,
-                onClickHabit = {},
-                onMark = { habitHistoryEntry -> viewModel.addEntry(habitHistoryEntry) },
-                onUnmark = { habitHistoryEntry -> viewModel.deleteEntry(habitHistoryEntry) }
-            )
-            AppDestinations.HABIT_ADD -> HabitAdd(Modifier.padding(innerPadding)) {
-                habit -> viewModel.addHabitAndReload(habit)
-                currentDestination = AppDestinations.HABIT_LIST
+        NavHost(navController, AppDestinations.HABIT_LIST.name) {
+            composable(route = AppDestinations.HABIT_LIST.name) {
+                HabitList(
+                    Modifier.padding(innerPadding),
+                    viewModel.loadHabitList(),
+                    focusedHabits,
+                    onClickHabit = {},
+                    onMark = { habitHistoryEntry -> viewModel.addEntry(habitHistoryEntry) },
+                    onUnmark = { habitHistoryEntry -> viewModel.deleteEntry(habitHistoryEntry) }
+                )
             }
-            AppDestinations.HABIT_EDIT -> HabitEdit(Modifier.padding(innerPadding), focusedHabits[0]) {
-                habit -> viewModel.updateHabitAndReload(habit)
-                currentDestination = AppDestinations.HABIT_LIST
-                focusedHabits.clear()
+            composable(route = AppDestinations.HABIT_ADD.name) {
+                HabitAdd(Modifier.padding(innerPadding)) { habit ->
+                    viewModel.addHabitAndReload(habit)
+                    navController.popBackStack()
+                }
             }
-            AppDestinations.HABIT_INFO -> Text("TBD", Modifier.padding(innerPadding))
+            composable(route = AppDestinations.HABIT_EDIT.name) {
+                HabitEdit(Modifier.padding(innerPadding), focusedHabits[0]) { habit ->
+                    viewModel.updateHabitAndReload(habit)
+                    navController.popBackStack()
+                    focusedHabits.clear()
+                }
+            }
+            composable(route = AppDestinations.HABIT_INFO.name) {
+                Text("TBD", Modifier.padding(innerPadding))
+            }
         }
         when {
             showDeleteDialog.value -> {
@@ -146,13 +169,17 @@ fun HabitsApp() {
 }
 
 enum class AppDestinations(
-    val label: Int
+    val label: Int,
 ) {
     HABIT_LIST( R.string.title_habit_list),
     HABIT_ADD(R.string.title_habit_add),
     HABIT_EDIT(R.string.title_habit_edit),
     HABIT_INFO(R.string.title_habit_info)
 }
+
+
+
+
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Preview
