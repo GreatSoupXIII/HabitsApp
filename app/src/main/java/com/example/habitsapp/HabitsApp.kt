@@ -1,5 +1,6 @@
 package com.example.habitsapp
 
+import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.AlertDialog
@@ -17,25 +18,22 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateListOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
-import androidx.compose.runtime.saveable.rememberSaveable
-import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.lifecycle.viewmodel.compose.viewModel
+import androidx.navigation.NavDestination.Companion.hasRoute
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
+import androidx.navigation.toRoute
 import com.example.habitsapp.models.Habit
-import com.example.habitsapp.models.HabitHistory
-import com.example.habitsapp.models.HabitHistoryEntry
-import com.example.habitsapp.models.Reminder
 import com.example.habitsapp.routes.HabitAdd
 import com.example.habitsapp.routes.HabitEdit
 import com.example.habitsapp.routes.HabitList
-import java.time.LocalDate
+import kotlinx.serialization.Serializable
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -51,18 +49,18 @@ fun HabitsApp() {
     Scaffold(
         topBar = { TopAppBar(
             title = { Text(
-                when(backStackEntry?.destination?.route) {
-                    AppDestinations.HABIT_LIST.name -> stringResource(R.string.title_habit_list)
-                    AppDestinations.HABIT_ADD.name -> stringResource(R.string.title_habit_add)
-                    AppDestinations.HABIT_EDIT.name -> stringResource(R.string.title_habit_edit)
-                    AppDestinations.HABIT_INFO.name -> stringResource(R.string.title_habit_info)
+                when {
+                    backStackEntry?.destination?.hasRoute<HabitListDestination>() == true -> stringResource(R.string.title_habit_list)
+                    backStackEntry?.destination?.hasRoute<HabitAddDestination>() == true -> stringResource(R.string.title_habit_add)
+                    backStackEntry?.destination?.hasRoute<HabitEditDestination>() == true -> stringResource(R.string.title_habit_edit)
+                    backStackEntry?.destination?.hasRoute<HabitInfoDestination>() == true -> stringResource(R.string.title_habit_info)
                     else -> stringResource(R.string.title_habit_list) //a crutch at app start
                 }
             ) },
             actions = {
-                if(backStackEntry?.destination?.route == AppDestinations.HABIT_LIST.name) {
+                if(backStackEntry?.destination?.hasRoute<HabitListDestination>() == true) {
                     if(focusedHabits.isEmpty()) {
-                        IconButton(onClick = { navController.navigate(AppDestinations.HABIT_ADD.name) }) { Icon(
+                        IconButton(onClick = { navController.navigate(HabitAddDestination) }) { Icon(
                             painterResource(R.drawable.add_24px),
                             "Add a habit"
                         ) }
@@ -72,7 +70,9 @@ fun HabitsApp() {
                         ) }
                     }
                     else if (focusedHabits.size == 1) {
-                        IconButton(onClick = { navController.navigate(AppDestinations.HABIT_EDIT.name) }) { Icon(
+                        IconButton(onClick = {
+                            navController.navigate(HabitEditDestination(focusedHabits[0].id!!))
+                        }) { Icon(
                             painterResource(R.drawable.edit_24px),
                             "Edit a habit"
                         ) }
@@ -102,8 +102,7 @@ fun HabitsApp() {
                 MaterialTheme.colorScheme.onSurface
             ),
             navigationIcon = {
-                if (navController.currentDestination?.route != null &&
-                    navController.currentDestination?.route != AppDestinations.HABIT_LIST.name) {
+                if (backStackEntry?.destination?.hasRoute<HabitListDestination>() == false) {
                     IconButton(onClick = { navController.popBackStack() }) { Icon(
                         painterResource(R.drawable.arrow_back_24px),
                         "Go back"
@@ -113,32 +112,40 @@ fun HabitsApp() {
         ) },
         modifier = Modifier.fillMaxSize()
     ) { innerPadding ->
-        NavHost(navController, AppDestinations.HABIT_LIST.name) {
-            composable(route = AppDestinations.HABIT_LIST.name) {
+        NavHost(navController, HabitListDestination) {
+            composable<HabitListDestination> {
                 HabitList(
                     Modifier.padding(innerPadding),
                     viewModel.loadHabitList(),
                     focusedHabits,
-                    onClickHabit = {},
+                    onClickHabit = { navController.navigate(HabitInfoDestination(it.id!!)) },
                     onMark = { habitHistoryEntry -> viewModel.addEntry(habitHistoryEntry) },
                     onUnmark = { habitHistoryEntry -> viewModel.deleteEntry(habitHistoryEntry) }
                 )
             }
-            composable(route = AppDestinations.HABIT_ADD.name) {
+            composable<HabitAddDestination> {
                 HabitAdd(Modifier.padding(innerPadding)) { habit ->
                     viewModel.addHabitAndReload(habit)
                     navController.popBackStack()
                 }
             }
-            composable(route = AppDestinations.HABIT_EDIT.name) {
-                HabitEdit(Modifier.padding(innerPadding), focusedHabits[0]) { habit ->
+            composable<HabitEditDestination> { backStackEntry ->
+                val habitEditDestination: HabitEditDestination = backStackEntry.toRoute()
+                val habit = viewModel.habitsList.find { it.id == habitEditDestination.habitId }
+                HabitEdit(Modifier.padding(innerPadding), habit!!) { habit ->
                     viewModel.updateHabitAndReload(habit)
                     navController.popBackStack()
                     focusedHabits.clear()
                 }
             }
-            composable(route = AppDestinations.HABIT_INFO.name) {
-                Text("TBD", Modifier.padding(innerPadding))
+            composable<HabitInfoDestination> { backStackEntry ->
+                val habitInfoDestination: HabitInfoDestination = backStackEntry.toRoute()
+                val habit = viewModel.habitsList.find { it.id == habitInfoDestination.habitId }
+                //this is a test component, must be replaced by a real screen
+                Column(Modifier.padding(innerPadding)){
+                    if(habit == null) Text("ERROR: Habit not found")
+                    else Text(habit.name, color = Color.White)
+                }
             }
         }
         when {
@@ -168,201 +175,11 @@ fun HabitsApp() {
     }
 }
 
-enum class AppDestinations(
-    val label: Int,
-) {
-    HABIT_LIST( R.string.title_habit_list),
-    HABIT_ADD(R.string.title_habit_add),
-    HABIT_EDIT(R.string.title_habit_edit),
-    HABIT_INFO(R.string.title_habit_info)
-}
-
-
-
-
-
-@OptIn(ExperimentalMaterial3Api::class)
-@Preview
-@Composable
-fun HabitsAppFocusedOnePreview() {
-
-    val habitList: List<Habit> = listOf(
-        Habit(
-            1,
-            "Сделать 1 приседание",
-            HabitHistory(
-                listOf(HabitHistoryEntry(1, 1)),
-                LocalDate.of(1970, 1, 1)
-            ),
-            Reminder(true, 5, 30)
-        ),
-        Habit(
-            2,
-            "Сделать 1 отжимание",
-            HabitHistory(
-                listOf(HabitHistoryEntry(1, 2, LocalDate.of(1990, 1, 1))),
-                LocalDate.of(1970, 1, 1)
-            ),
-            Reminder(false, 5, 30)
-        ),
-        Habit(
-            3,
-            "Сыграть в Гвинт",
-            HabitHistory(
-                habitCreatedAtDate = LocalDate.of(1970, 1, 1)
-            ),
-            Reminder(true, 5, 30))
-    )
-
-    val focusedHabits = remember { mutableStateListOf<Habit>(habitList[0]) }
-
-    var currentDestination by rememberSaveable { mutableStateOf(AppDestinations.HABIT_LIST) }
-
-
-    Scaffold(
-        topBar = { TopAppBar(
-            title = { Text(stringResource(currentDestination.label)) },
-            actions = {
-                if(currentDestination == AppDestinations.HABIT_LIST) {
-                    if(!focusedHabits.isEmpty()) {
-                        IconButton(onClick = {}) { Icon(
-                            painterResource(R.drawable.add_24px),
-                            "Add a habit"
-                        ) }
-                        IconButton(onClick = {}) { Icon(
-                            painterResource(R.drawable.more_vert_24px),
-                            "More options"
-                        ) }
-                    }
-                    else {
-                        IconButton(onClick = {}) { Icon(
-                            painterResource(R.drawable.edit_24px),
-                            "Edit a habit"
-                        ) }
-                        IconButton(onClick = {}) { Icon(
-                            painterResource(R.drawable.delete_24px),
-                            "Delete a habit"
-                        ) }
-                    }
-                }
-            },
-            colors = TopAppBarColors(
-                MaterialTheme.colorScheme.surfaceContainer,
-                MaterialTheme.colorScheme.surfaceContainer,
-                MaterialTheme.colorScheme.onSurface,
-                MaterialTheme.colorScheme.onSurface,
-                MaterialTheme.colorScheme.onSurface,
-                MaterialTheme.colorScheme.onSurface
-            )
-        ) },
-        modifier = Modifier.fillMaxSize()
-    ) { innerPadding ->
-        when(currentDestination) {
-            AppDestinations.HABIT_LIST -> HabitList(
-                Modifier.padding(innerPadding),
-                habitList,
-                focusedHabits,
-                onClickHabit = {},
-                onMark = {},
-                onUnmark = {}
-            )
-            AppDestinations.HABIT_ADD -> Text("TBD", Modifier.padding(innerPadding))
-            AppDestinations.HABIT_EDIT -> Text("TBD", Modifier.padding(innerPadding))
-            AppDestinations.HABIT_INFO -> Text("TBD", Modifier.padding(innerPadding))
-        }
-
-    }
-}
-
-@OptIn(ExperimentalMaterial3Api::class)
-@Preview
-@Composable
-fun HabitsAppPreviewFocusedMany() {
-
-    val habitList: List<Habit> = listOf(
-        Habit(
-            1,
-            "Сделать 1 приседание",
-            HabitHistory(
-                listOf(HabitHistoryEntry(1, 1)),
-                LocalDate.of(1970, 1, 1)
-            ),
-            Reminder(true, 5, 30)
-        ),
-        Habit(
-            2,
-            "Сделать 1 отжимание",
-            HabitHistory(
-                listOf(HabitHistoryEntry(1, 2, LocalDate.of(1990, 1, 1))),
-                LocalDate.of(1970, 1, 1)
-            ),
-            Reminder(false, 5, 30)
-        ),
-        Habit(
-            3,
-            "Сыграть в Гвинт",
-            HabitHistory(
-                habitCreatedAtDate = LocalDate.of(1970, 1, 1)
-            ),
-            Reminder(true, 5, 30))
-    )
-
-    val focusedHabits = remember { mutableStateListOf(habitList[0], habitList[2]) }
-
-    var currentDestination by rememberSaveable { mutableStateOf(AppDestinations.HABIT_LIST) }
-
-
-    Scaffold(
-        topBar = { TopAppBar(
-            title = { Text(stringResource(currentDestination.label)) },
-            actions = {
-                if(currentDestination == AppDestinations.HABIT_LIST) {
-                    if(!focusedHabits.isEmpty()) {
-                        IconButton(onClick = {}) { Icon(
-                            painterResource(R.drawable.add_24px),
-                            "Add a habit"
-                        ) }
-                        IconButton(onClick = {}) { Icon(
-                            painterResource(R.drawable.more_vert_24px),
-                            "More options"
-                        ) }
-                    }
-                    else {
-                        IconButton(onClick = {}) { Icon(
-                            painterResource(R.drawable.edit_24px),
-                            "Edit a habit"
-                        ) }
-                        IconButton(onClick = {}) { Icon(
-                            painterResource(R.drawable.delete_24px),
-                            "Delete a habit"
-                        ) }
-                    }
-                }
-            },
-            colors = TopAppBarColors(
-                MaterialTheme.colorScheme.surfaceContainer,
-                MaterialTheme.colorScheme.surfaceContainer,
-                MaterialTheme.colorScheme.onSurface,
-                MaterialTheme.colorScheme.onSurface,
-                MaterialTheme.colorScheme.onSurface,
-                MaterialTheme.colorScheme.onSurface
-            )
-        ) },
-        modifier = Modifier.fillMaxSize()
-    ) { innerPadding ->
-        when(currentDestination) {
-            AppDestinations.HABIT_LIST -> HabitList(
-                Modifier.padding(innerPadding),
-                habitList,
-                focusedHabits,
-                onClickHabit = {},
-                onMark = {},
-                onUnmark = {}
-            )
-            AppDestinations.HABIT_ADD -> Text("TBD", Modifier.padding(innerPadding))
-            AppDestinations.HABIT_EDIT -> Text("TBD", Modifier.padding(innerPadding))
-            AppDestinations.HABIT_INFO -> Text("TBD", Modifier.padding(innerPadding))
-        }
-
-    }
-}
+@Serializable
+object HabitListDestination
+@Serializable
+object HabitAddDestination
+@Serializable
+data class HabitEditDestination(val habitId: Int)
+@Serializable
+data class HabitInfoDestination(val habitId: Int)
