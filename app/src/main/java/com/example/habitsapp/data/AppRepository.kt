@@ -68,7 +68,11 @@ class AppRepository(
             .putExtra("EXTRA_HABIT_HOUR", habit.reminder.hour)
             .putExtra("EXTRA_HABIT_MINUTE", habit.reminder.minute)
             .let { intent ->
-                PendingIntent.getBroadcast(context, habit.id!!, intent, PendingIntent.FLAG_IMMUTABLE)
+                PendingIntent.getBroadcast(
+                    context,
+                    habit.id!!,
+                    intent,
+                    PendingIntent.FLAG_IMMUTABLE or PendingIntent.FLAG_UPDATE_CURRENT)
             }
 
         val calendar: Calendar = Calendar.getInstance().apply {
@@ -101,7 +105,7 @@ class AppRepository(
 
         alarmMgr.cancel(alarmIntent)
     }
-    
+
     override fun checkFailureStreaksAndNotify() {
 
         val workRequestBuilder = PeriodicWorkRequestBuilder<StreakUpdateWorker>(24, TimeUnit.HOURS)

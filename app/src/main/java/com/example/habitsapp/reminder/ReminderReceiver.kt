@@ -71,7 +71,11 @@ class ReminderReceiver : BroadcastReceiver() {
             .putExtra("EXTRA_HABIT_HOUR", habitHour)
             .putExtra("EXTRA_HABIT_MINUTE", habitMinute)
             .let { intent ->
-                PendingIntent.getBroadcast(context, habitId!!, intent, PendingIntent.FLAG_IMMUTABLE)
+                PendingIntent.getBroadcast(
+                    context,
+                    habitId!!,
+                    intent,
+                    PendingIntent.FLAG_IMMUTABLE or PendingIntent.FLAG_UPDATE_CURRENT)
             }
 
         //if app needs permission and doesn't have it, don't do anything
