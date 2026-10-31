@@ -38,6 +38,8 @@ class AppRepository(
 
     override suspend fun loadHabitList(): Map<HabitData, List<HabitHistoryEntryData>> = habitDao.getAll()
 
+    override suspend fun loadOnlyHabits(): List<HabitData> = habitDao.getHabits()
+
     override suspend fun addHabitAndReload(habit: Habit) = habitDao.insert(HabitData(habit))
 
     override suspend fun deleteHabitsAndReload(habits: List<Habit>) {

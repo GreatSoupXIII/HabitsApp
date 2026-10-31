@@ -17,6 +17,9 @@ interface HabitDao {
         """)
     suspend fun getAll(): Map<HabitData, List<HabitHistoryEntryData>>
 
+    @Query("SELECT * FROM habitData")
+    suspend fun getHabits(): List<HabitData>
+
     @Insert
     suspend fun insert(habit: HabitData): Long
 
