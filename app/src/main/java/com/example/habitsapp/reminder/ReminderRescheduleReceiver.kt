@@ -23,8 +23,7 @@ class ReminderRescheduleReceiver : BroadcastReceiver() {
             intent.action == "android.intent.action.BOOT_COMPLETED" ||
             intent.action == "android.intent.action.TIMEZONE_CHANGED" ||
             intent.action == "android.intent.action.TIMEZONE_OFFSET_CHANGED" ||
-            intent.action == "android.intent.action.TIME_SET" ||
-            intent.action == "android.intent.action.DATE_CHANGED"
+            intent.action == "android.intent.action.TIME_SET"
             ) {
             scope.launch {
                 try {
