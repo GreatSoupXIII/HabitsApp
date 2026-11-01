@@ -93,7 +93,7 @@ class AppRepository(
         }
 
         //otherwise it's good
-        alarmMgr.setExact(
+        alarmMgr.setExactAndAllowWhileIdle(
             AlarmManager.RTC_WAKEUP,
             calendar.timeInMillis,
             alarmIntent
