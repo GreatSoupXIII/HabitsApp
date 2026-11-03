@@ -31,6 +31,7 @@ import java.time.LocalDate
 fun HabitListItem(
     habit: Habit,
     focused: Boolean,
+    today: LocalDate,
     onMark: () -> Unit,
     onUnmark: () -> Unit,
     onClick: () -> Unit,
@@ -38,7 +39,7 @@ fun HabitListItem(
 ) {
 
     val marked = !habit.history.items.isEmpty() &&
-        habit.history.items[0].date == LocalDate.now()
+        habit.history.items[0].date == today
 
     Row(
         modifier = Modifier
@@ -106,7 +107,7 @@ fun HabitListItemPreview() {
         HabitHistory(habitCreatedAtDate = LocalDate.of(1970, 1, 1)),
         Reminder(true, 5, 30)
     )
-    HabitListItem(habit, false,  {}, {}, {}, {})
+    HabitListItem(habit, false, LocalDate.now(), {}, {}, {}, {})
 }
 
 @Preview
@@ -121,7 +122,7 @@ fun HabitListItemMarkedPreview() {
         ),
         Reminder(true, 5, 30)
     )
-    HabitListItem(habit, false,  {}, {}, {}, {})
+    HabitListItem(habit, false, LocalDate.now(),  {}, {}, {}, {})
 }
 
 @Preview
@@ -135,7 +136,7 @@ fun HabitListItemFocusedPreview() {
         ),
         Reminder(true, 5, 30)
     )
-    HabitListItem(habit, true, {}, {}, {}, {})
+    HabitListItem(habit, true, LocalDate.now(), {}, {}, {}, {})
 }
 @Preview
 @Composable
@@ -146,5 +147,5 @@ fun HabitListItemTwoLinePreview() {
         HabitHistory(habitCreatedAtDate = LocalDate.of(1970, 1, 1)),
         Reminder(true, 5, 30)
     )
-    HabitListItem(habit, true, {}, {}, {}, {})
+    HabitListItem(habit, true, LocalDate.now(), {}, {}, {}, {})
 }

@@ -1,22 +1,29 @@
 package com.example.habitsapp.routes
 
+import android.content.IntentFilter
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateListOf
+import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.runtime.snapshots.SnapshotStateList
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import androidx.core.content.ContextCompat
 import com.example.habitsapp.components.HabitListItem
 import com.example.habitsapp.models.Habit
 import com.example.habitsapp.models.HabitHistory
 import com.example.habitsapp.models.HabitHistoryEntry
 import com.example.habitsapp.models.Reminder
+import com.example.habitsapp.utils.DateChangeReceiver
 import java.time.LocalDate
 
 @Composable
@@ -28,6 +35,16 @@ fun HabitList(
     onMark: (HabitHistoryEntry) -> Unit,
     onUnmark: (HabitHistoryEntry) -> Unit
 ) {
+    val context = LocalContext.current
+    var today by remember { mutableStateOf<LocalDate>(LocalDate.now())}
+
+    val receiver = DateChangeReceiver({ today = LocalDate.now() })
+    val filter = IntentFilter("android.intent.action.DATE_CHANGED")
+    filter.addAction("android.intent.action.TIME_SET")
+
+    //todo: check if you need to unregister this in a composable
+    ContextCompat.registerReceiver(context, receiver, filter, ContextCompat.RECEIVER_NOT_EXPORTED)
+
 
     Column(modifier = modifier
         .clickable(
@@ -45,6 +62,7 @@ fun HabitList(
             HabitListItem(
                 habit,
                 focusedHabits.contains(habit),
+                today,
                 { onMark(HabitHistoryEntry(habitId = habit.id!!)) },
                 { onUnmark(habit.history.items[0]) }, //you can only unmark if there is an entry for today, so items[0] is OK
                 {
