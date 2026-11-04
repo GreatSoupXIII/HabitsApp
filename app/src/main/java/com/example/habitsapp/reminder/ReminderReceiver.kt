@@ -1,8 +1,6 @@
 package com.example.habitsapp.reminder
 
 import android.app.AlarmManager
-import android.app.NotificationChannel
-import android.app.NotificationManager
 import android.app.PendingIntent
 import android.content.BroadcastReceiver
 import android.content.Context
@@ -12,6 +10,7 @@ import android.os.Build
 import androidx.core.app.ActivityCompat
 import androidx.core.app.NotificationCompat
 import androidx.core.app.NotificationManagerCompat
+import com.example.habitsapp.NOTIFICATION_CHANNEL_ID
 import com.example.habitsapp.R
 import java.util.Calendar
 
@@ -20,28 +19,12 @@ class ReminderReceiver : BroadcastReceiver() {
     override fun onReceive(context: Context?, intent: Intent?) {
 
         val alarmMgr = context?.getSystemService(Context.ALARM_SERVICE) as AlarmManager
-        val notificationManager = context?.getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager?
-
-        //todo: probably move channel creation to app start
-        val NOTIFICATION_CHANNEL_ID = "1"
-        val name = "test channel name 2 "
-        val descriptionText = "test description text 2"
-        val channel = NotificationChannel(
-            NOTIFICATION_CHANNEL_ID,
-            name,
-            NotificationManager.IMPORTANCE_DEFAULT
-        )
-        channel.description = descriptionText
-        notificationManager?.createNotificationChannel(
-            channel
-        )
-
         val habitId = intent?.getIntExtra("EXTRA_HABIT_ID", -1)
         val habitName = intent?.getStringExtra("EXTRA_HABIT_NAME")
         val habitHour = intent?.getIntExtra("EXTRA_HABIT_HOUR", -1)
         val habitMinute = intent?.getIntExtra("EXTRA_HABIT_MINUTE", -1)
         
-        val builder = NotificationCompat.Builder(context!!, NOTIFICATION_CHANNEL_ID)
+        val builder = NotificationCompat.Builder(context, NOTIFICATION_CHANNEL_ID)
             .setSmallIcon(R.drawable.ic_account_box)
             .setContentTitle(habitName)
             .setPriority(NotificationCompat.PRIORITY_DEFAULT)

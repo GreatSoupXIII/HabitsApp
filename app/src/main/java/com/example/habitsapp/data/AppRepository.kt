@@ -1,6 +1,8 @@
 package com.example.habitsapp.data
 
 import android.app.AlarmManager
+import android.app.NotificationChannel
+import android.app.NotificationManager
 import android.app.PendingIntent
 import android.content.Context
 import android.content.Intent
@@ -10,6 +12,8 @@ import androidx.sqlite.driver.bundled.BundledSQLiteDriver
 import androidx.work.ExistingPeriodicWorkPolicy
 import androidx.work.PeriodicWorkRequestBuilder
 import androidx.work.WorkManager
+import com.example.habitsapp.ADVICE_CHANNEL_ID
+import com.example.habitsapp.NOTIFICATION_CHANNEL_ID
 import com.example.habitsapp.data.entities.HabitData
 import com.example.habitsapp.data.entities.HabitHistoryEntryData
 import com.example.habitsapp.models.Habit
@@ -35,6 +39,38 @@ class AppRepository(
     override val workManager = WorkManager.getInstance(context)
 
     val alarmMgr = context.getSystemService(Context.ALARM_SERVICE) as AlarmManager
+    val notificationManager = context.getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager?
+
+    init {
+        createNotificationChannels()
+    }
+
+    private fun createNotificationChannels() {
+        //todo: make links in strings.xml for these
+        val adviceChannelName = "Советы"
+        val adviceChannelDescriptionText = "Уведомления с советом упростить цель, если она не выполняется несколько раз подряд"
+
+        val notificationChannelName = "Напоминания"
+        val notificationChannelDescriptionText = "Уведомления с напоминаниями, задаваемыми вами для отдельных привычек"
+
+        val adviceChannel = NotificationChannel(
+            ADVICE_CHANNEL_ID,
+            adviceChannelName,
+            NotificationManager.IMPORTANCE_LOW
+        )
+        adviceChannel.description = adviceChannelDescriptionText
+
+        val notificationChannel = NotificationChannel(
+            NOTIFICATION_CHANNEL_ID,
+            notificationChannelName,
+            NotificationManager.IMPORTANCE_DEFAULT
+        )
+        notificationChannel.description = notificationChannelDescriptionText
+
+        notificationManager?.createNotificationChannels(
+            listOf(adviceChannel, notificationChannel)
+        )
+    }
 
     override suspend fun loadHabitList(): Map<HabitData, List<HabitHistoryEntryData>> = habitDao.getAll()
 
